@@ -70,6 +70,7 @@ public class Main {
 		System.out.println("loaded images in "+(end-start)+"ms");
 		while (true) {
 			String image = read("image to search? [nothing to start again]");
+			hideImages();
 			if (StringUtils.isBlank(image)) {
 				return;
 			}
