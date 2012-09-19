@@ -18,21 +18,6 @@ import org.junit.Test;
 public class PHashImageSearcherTest extends ImageSearcherTest {
 
 	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-		
-	}
-
-	/**
 	 * Test method for {@link com.dart.archive.image.search.NaiveColorImageSearcher#compare(java.awt.image.RenderedImage)}.
 	 * @throws IOException 
 	 */

@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,22 +20,23 @@ import org.junit.Test;
  */
 public class ImagePHashTest {
 
-	String imageA = "/Users/massi/Pictures/test-images/dynys.pdf_16_146test.jpg";
-	String imageB = "/Users/massi/Pictures/dart/dynys.pdf_16_146.jpg";
+	String imageA;
+	String imageB;
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		try {
+			Properties properties = new Properties();
+			properties.load(new FileInputStream("src/test/resources/test.properties"));
+			imageA = properties.getProperty("imageA");
+			imageB   = properties.getProperty("imageB");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		System.out.println("-----------------------------------------");
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
 	}
 
 	/**
