@@ -33,8 +33,8 @@ import org.junit.Test;
  */
 public abstract class ImageSearcherTest {
 
-	String imagesFolder;
-	String testFolder;
+	protected String imagesFolder;
+	protected String testFolder;
 	
 	
 	ImageSearcher searcher;

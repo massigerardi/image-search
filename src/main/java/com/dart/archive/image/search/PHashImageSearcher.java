@@ -6,6 +6,7 @@ package com.dart.archive.image.search;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,7 +53,9 @@ public class PHashImageSearcher extends AImageSearcher implements ImageSearcher 
 			String hash = imagePHash.getHash(new FileInputStream(file));
 			for (ImageHash imageHash : images) {
 				Double distance = imagePHash.distance(hash, imageHash.getHash());
-				Candidate candidate = new NaiveCandidate((double)Math.round(distance * 100) / 100, imageHash.getImage());
+				DecimalFormat twoDForm = new DecimalFormat("#.##");
+				double result = (double)Math.round(distance * 100) / 100;
+				Candidate candidate = new NaiveCandidate(Double.valueOf(twoDForm.format(result)), imageHash.getImage());
 				candidates.add(candidate);
 			}
 		} catch (FileNotFoundException e) {

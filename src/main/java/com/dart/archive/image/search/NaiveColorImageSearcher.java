@@ -9,6 +9,7 @@ import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -195,7 +196,9 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 			// reference signature.
 			for (ImageDescriptor imageDescriptor : images) {
 				double distance = calcDistance(signature, imageDescriptor.getSignature());
-				Candidate candidate = new NaiveCandidate((double)Math.round(distance * 100) / 100, imageDescriptor.getImage());
+				DecimalFormat twoDForm = new DecimalFormat("#.##");
+				double result = (double)Math.round(distance * 100) / 100;
+				Candidate candidate = new NaiveCandidate(Double.valueOf(twoDForm.format(result)), imageDescriptor.getImage());
 				candidates.add(candidate);
 			}
 		} catch (Exception e) {

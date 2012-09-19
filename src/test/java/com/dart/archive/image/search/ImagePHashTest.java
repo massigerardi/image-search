@@ -53,6 +53,7 @@ public class ImagePHashTest {
 		System.out.println("'"+hashB+"'");
 		double distance = imagePHash.distance(hashA, hashB);
 		System.out.println(distance);
+		assertEquals(1.0d, distance, 0);
 	}
 
 	/**
@@ -69,6 +70,7 @@ public class ImagePHashTest {
 		System.out.println("'"+hashB+"'");
 		double distance = imagePHash.distance(hashA, hashB);
 		System.out.println(distance);
+		assertEquals(0.94d, distance, 0.00d);
 	}
 
 	/**
@@ -84,7 +86,7 @@ public class ImagePHashTest {
 		System.out.println("'"+hashA+"'");
 		System.out.println("'"+hashB+"'");
 		double distance = imagePHash.distance(hashA, hashB);
-		System.out.println(distance);
+		assertEquals(0.94d, distance, 0.00d);
 	}
 
 	/**
@@ -97,6 +99,7 @@ public class ImagePHashTest {
 		ImagePHash imagePHash = new ImagePHash();
 		String hash = imagePHash.getHash(new FileInputStream(new File(imageA)));
 		System.out.println(hash);
+		assertEquals("0000000011000110000000000100000000000100100000100", hash);
 	}
 
 }

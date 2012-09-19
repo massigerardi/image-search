@@ -6,6 +6,7 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 /*
@@ -36,7 +37,9 @@ public class ImagePHash {
 				counter++;
 			}
 		}
-		return (double)(1-counter/(double)s1.length());
+		DecimalFormat twoDForm = new DecimalFormat("#.##");
+		double result = (double)(1-counter/(double)s1.length());
+		return Double.valueOf(twoDForm.format(result));
 	}
 	
 	// Returns a 'binary string' (like. 001010111011100010) which is easy to do a hamming distance on. 
