@@ -3,12 +3,12 @@
  */
 package com.dart.archive.image.search;
 
-import static org.junit.Assert.*;
-
+import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -31,20 +31,10 @@ public class NaiveColorImageSearcherTest extends ImageSearcherTest {
 	 */
 	@Test
 	public void testCompare() throws IOException {
+		Collection<File> files = FileUtils.listFiles(new File(imagesFolder), new String[] {"jpg", "jpeg"}, true);
 		long start = System.currentTimeMillis();
 		setSearcher(new NaiveColorImageSearcher(imagesFolder, 5, 60));
-		System.out.println("loaded images in "+(System.currentTimeMillis()-start)+"ms");
-		compare();
-	}
-
-	/**
-	 * Test method for {@link com.dart.archive.image.search.NaiveColorImageSearcher#compare(java.awt.image.RenderedImage)}.
-	 */
-	@Test
-	public void testCompare1050() throws IOException {
-		long start = System.currentTimeMillis();
-		setSearcher(new NaiveColorImageSearcher(imagesFolder, 10, 50));
-		System.out.println("loaded images in "+(System.currentTimeMillis()-start)+"ms");
+		System.out.println("loaded "+files.size()+"images in "+(System.currentTimeMillis()-start)+"ms");
 		compare();
 	}
 

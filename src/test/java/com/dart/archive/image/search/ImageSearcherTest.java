@@ -58,7 +58,7 @@ public abstract class ImageSearcherTest {
 
 	protected void compare() throws IOException {
 		File testImages = new File(testFolder);
-		Collection<File> images = FileUtils.listFiles(testImages, new String[] {"jpg"}, true);
+		Collection<File> images = FileUtils.listFiles(testImages, new String[] {"jpg", "JPG"}, true);
 		for (File image : images) {
 			compare(image);
 		}
@@ -99,8 +99,8 @@ public abstract class ImageSearcherTest {
 
 
 	private boolean checkName(String image, String candidate) {
-		String imageName = StringUtils.remove(image, ".jpg");
-		String candifateName = StringUtils.remove(candidate, ".jpg");
+		String imageName = StringUtils.remove(StringUtils.remove(image.toLowerCase(), ".jpg"),".jpeg");
+		String candifateName = StringUtils.remove(StringUtils.remove(candidate.toLowerCase(), ".jpg"),".jpeg");
 		return imageName.startsWith(candifateName);
 	}
 

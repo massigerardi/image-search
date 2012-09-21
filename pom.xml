@@ -20,8 +20,6 @@
 			<artifactId>imagej</artifactId>
 			<version>1.46</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

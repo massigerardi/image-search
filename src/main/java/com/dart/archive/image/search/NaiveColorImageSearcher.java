@@ -3,23 +3,20 @@
  */
 package com.dart.archive.image.search;
 
+import ij.process.ColorProcessor;
+
 import java.awt.Color;
-import java.awt.image.RenderedImage;
-import java.awt.image.renderable.ParameterBlock;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.media.jai.InterpolationNearest;
-import javax.media.jai.JAI;
-import javax.media.jai.iterator.RandomIter;
-import javax.media.jai.iterator.RandomIterFactory;
+
+import org.apache.commons.io.FileUtils;
 
 
 /**
@@ -32,6 +29,7 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	private int zones;
 	
 	List<ImageDescriptor> images;
+	
 	public NaiveColorImageSearcher(String reference) {
 		this(reference, 5, 60);
 	}
@@ -48,11 +46,10 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 		fraction = zones * 2;
 		baseDistance = Math.pow(zones, 2) * Math.sqrt( 3*(Math.pow(255,2)));
 		images = new ArrayList<ImageDescriptor>();
-		File[] files = getOtherImageFiles(new File(reference));
+		Collection<File> files = FileUtils.listFiles(new File(reference), new String[] {"jpg", "jpeg"}, true);
 		try {
-			for (int i = 0; i < files.length; i++) {
-				File file = files[i];
-				RenderedImage current = rescale(ImageIO.read(file));
+			for (File file : files) {
+				BufferedImage current = rescaleImage(ImageIO.read(file));
 				Color[][] signature = calcSignature(current);
 				ImageDescriptor image = new ImageDescriptor(signature, file);
 				images.add(image);
@@ -75,25 +72,14 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	 * This method rescales an image to 300,300 pixels using the JAI scale
 	 * operator.
 	 */
-	RenderedImage rescale(RenderedImage i) {
-		float scaleW = ((float) baseSize) / i.getWidth();
-		float scaleH = ((float) baseSize) / i.getHeight();
-		// Scales the original image
-		ParameterBlock pb = new ParameterBlock();
-		pb.addSource(i);
-		pb.add(scaleW);
-		pb.add(scaleH);
-		pb.add(0.0F);
-		pb.add(0.0F);
-		pb.add(new InterpolationNearest());
-		// Creates a new, scaled image and uses it on the DisplayJAI component
-		return JAI.create("scale", pb);
+	BufferedImage rescaleImage(BufferedImage i) {
+		return new ColorProcessor(i).resize(300,300).getBufferedImage();
 	}
 
 	/*
 	 * This method calculates and returns signature vectors for the input image.
 	 */
-	Color[][] calcSignature(RenderedImage i) {
+	Color[][] calcSignature(BufferedImage i) {
 		// Get memory for the signature.
 		Color[][] sig = new Color[zones][zones];
 		// For each of the 25 signature values average the pixels around it.
@@ -113,11 +99,10 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	 * the average as an instance of Color. The point coordinates are
 	 * proportional to the image.
 	 */
-	private Color averageAround(RenderedImage i, double px, double py) {
-		// Get an iterator for the image.
-		RandomIter iterator = RandomIterFactory.create(i, null);
+	private Color averageAround(BufferedImage i, double px, double py) {
+		ColorProcessor processor = new ColorProcessor(i);
+		
 		// Get memory for a pixel and for the accumulator.
-		double[] pixel = new double[3];
 		double[] accum = new double[3];
 		// The size of the sampling area.
 		int sampleSize = zoneSize/4;
@@ -127,10 +112,10 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 				+ sampleSize; x++) {
 			for (double y = py * baseSize - sampleSize; y < py * baseSize
 					+ sampleSize; y++) {
-				iterator.getPixel((int) x, (int) y, pixel);
-				accum[0] += pixel[0];
-				accum[1] += pixel[1];
-				accum[2] += pixel[2];
+				int [] values = processor.getPixel((int)x, (int)y, null);
+				accum[0] += values[0];
+				accum[1] += values[1];
+				accum[2] += values[2];
 				numPixels++;
 			}
 		}
@@ -167,31 +152,12 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 		return 1-(dist/baseDistance);
 	}
 
-	/*
-	 * This method get all image files in the same directory as the reference.
-	 * Just for kicks include also the reference image.
-	 */
-	private File[] getOtherImageFiles(File reference) {
-		// List all the image files in that directory.
-		File[] others = reference.listFiles(new FileFilter() {
-
-			public boolean accept(File f) {
-				if (f.getName().toLowerCase().endsWith(".jpeg"))
-					return true;
-				if (f.getName().toLowerCase().endsWith(".jpg"))
-					return true;
-				return false;
-			}
-		});
-		return others;
-	}
-
 	@Override
 	void populateCandidate(Collection<Candidate> candidates, File file) {
 		try {
-			RenderedImage image = ImageIO.read(file);
+			BufferedImage image = ImageIO.read(file);
 			// Put the reference, scaled, in the left part of the UI.
-			RenderedImage ref = rescale(image);
+			BufferedImage ref = rescaleImage(image);
 			// Calculate the signature vector for the reference.
 			Color[][] signature = calcSignature(ref);
 			// Now we need a component to store X images in a stack, where X is the
