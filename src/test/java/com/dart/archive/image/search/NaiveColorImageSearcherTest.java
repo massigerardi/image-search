@@ -17,12 +17,16 @@ import org.junit.Test;
  */
 public class NaiveColorImageSearcherTest extends ImageSearcherTest {
 
+	static {
+		System.setProperty("com.sun.media.jai.disableMediaLib", "true");
+	}
+
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@After
 	public void tearDown() throws Exception {
-		
+
 	}
 
 	/**
