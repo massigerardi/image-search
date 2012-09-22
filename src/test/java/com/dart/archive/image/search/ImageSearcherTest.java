@@ -3,29 +3,17 @@
  */
 package com.dart.archive.image.search;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
-import ij.ImagePlus;
-import ij.io.Opener;
-
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author massi

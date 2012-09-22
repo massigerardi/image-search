@@ -3,16 +3,17 @@
  */
 package com.dart.archive.image.search;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Properties;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.dart.archive.image.search.hash.ImagePHash;
 
 /**
  * @author massi
@@ -40,7 +41,7 @@ public class ImagePHashTest {
 	}
 
 	/**
-	 * Test method for {@link com.dart.archive.image.search.ImagePHash#distance(java.lang.String, java.lang.String)}.
+	 * Test method for {@link com.dart.archive.image.search.hash.ImagePHash#distance(java.lang.String, java.lang.String)}.
 	 * @throws Exception 
 	 * @throws FileNotFoundException 
 	 */
@@ -57,7 +58,7 @@ public class ImagePHashTest {
 	}
 
 	/**
-	 * Test method for {@link com.dart.archive.image.search.ImagePHash#distance(java.lang.String, java.lang.String)}.
+	 * Test method for {@link com.dart.archive.image.search.hash.ImagePHash#distance(java.lang.String, java.lang.String)}.
 	 * @throws Exception 
 	 * @throws FileNotFoundException 
 	 */
@@ -74,7 +75,7 @@ public class ImagePHashTest {
 	}
 
 	/**
-	 * Test method for {@link com.dart.archive.image.search.ImagePHash#distance(java.lang.String, java.lang.String)}.
+	 * Test method for {@link com.dart.archive.image.search.hash.ImagePHash#distance(java.lang.String, java.lang.String)}.
 	 * @throws Exception 
 	 * @throws FileNotFoundException 
 	 */
@@ -90,7 +91,7 @@ public class ImagePHashTest {
 	}
 
 	/**
-	 * Test method for {@link com.dart.archive.image.search.ImagePHash#getHash(java.io.InputStream)}.
+	 * Test method for {@link com.dart.archive.image.search.hash.ImagePHash#getHash(java.io.InputStream)}.
 	 * @throws Exception 
 	 * @throws FileNotFoundException 
 	 */

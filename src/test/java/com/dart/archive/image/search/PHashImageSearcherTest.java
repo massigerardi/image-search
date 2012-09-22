@@ -3,13 +3,11 @@
  */
 package com.dart.archive.image.search;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+
+import com.dart.archive.image.search.hash.PHashImageSearcher;
 
 /**
  * @author massi
