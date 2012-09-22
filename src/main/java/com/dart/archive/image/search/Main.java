@@ -18,6 +18,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.dart.archive.image.search.hash.PHashImageSearcher;
+
 /**
  * @author massi 
  * 

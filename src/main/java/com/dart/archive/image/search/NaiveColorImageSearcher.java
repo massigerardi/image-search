@@ -18,6 +18,8 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 
+import com.dart.archive.image.utils.ImageUtils;
+
 
 /**
  * @author massi
@@ -47,15 +49,11 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 		baseDistance = Math.pow(zones, 2) * Math.sqrt( 3*(Math.pow(255,2)));
 		images = new ArrayList<ImageDescriptor>();
 		Collection<File> files = FileUtils.listFiles(new File(reference), new String[] {"jpg", "jpeg"}, true);
-		try {
-			for (File file : files) {
-				BufferedImage current = rescaleImage(ImageIO.read(file));
-				Color[][] signature = calcSignature(current);
-				ImageDescriptor image = new ImageDescriptor(signature, file);
-				images.add(image);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		for (File file : files) {
+			BufferedImage current = ImageUtils.resize(300, 300, file.getAbsolutePath());
+			Color[][] signature = calcSignature(current);
+			ImageDescriptor image = new ImageDescriptor(signature, file);
+			images.add(image);
 		}
 	}
 
@@ -67,14 +65,6 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	private int zoneSize;
 	// The base size of the images.
 	private int baseSize;
-
-	/*
-	 * This method rescales an image to 300,300 pixels using the JAI scale
-	 * operator.
-	 */
-	BufferedImage rescaleImage(BufferedImage i) {
-		return new ColorProcessor(i).resize(300,300).getBufferedImage();
-	}
 
 	/*
 	 * This method calculates and returns signature vectors for the input image.
@@ -153,11 +143,11 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	}
 
 	@Override
-	void populateCandidate(Collection<Candidate> candidates, File file) {
+	protected void populateCandidate(Collection<Candidate> candidates, File file) {
 		try {
 			BufferedImage image = ImageIO.read(file);
 			// Put the reference, scaled, in the left part of the UI.
-			BufferedImage ref = rescaleImage(image);
+			BufferedImage ref = ImageUtils.resize(300, 300, file.getAbsolutePath());
 			// Calculate the signature vector for the reference.
 			Color[][] signature = calcSignature(ref);
 			// Now we need a component to store X images in a stack, where X is the
@@ -168,7 +158,7 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 				double distance = calcDistance(signature, imageDescriptor.getSignature());
 				DecimalFormat twoDForm = new DecimalFormat("#.##");
 				double result = (double)Math.round(distance * 100) / 100;
-				Candidate candidate = new NaiveCandidate(Double.valueOf(twoDForm.format(result)), imageDescriptor.getImage());
+				Candidate candidate = new CandidateImpl(Double.valueOf(twoDForm.format(result)), imageDescriptor.getImage());
 				candidates.add(candidate);
 			}
 		} catch (Exception e) {

@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.Collection;
 import java.util.TreeSet;
 
-public abstract class AImageSearcher {
+public abstract class AImageSearcher implements ImageSearcher{
 
 	public AImageSearcher() {
 	}
 
-	abstract void populateCandidate(Collection<Candidate> candidates, File file);
+	protected abstract void populateCandidate(Collection<Candidate> candidates, File file);
 	
 	public Collection<Candidate> compare(File file) {
 		Collection<Candidate> result = new TreeSet<Candidate>();

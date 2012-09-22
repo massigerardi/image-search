@@ -15,8 +15,6 @@ public class ImageDescriptor {
 	Color[][] signature;
 	
 	File image;
-
-	
 	
 	public ImageDescriptor(Color[][] signature, File image) {
 		this.signature = signature;
