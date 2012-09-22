@@ -18,7 +18,6 @@ import org.apache.commons.io.FileUtils;
 
 import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
-import com.dart.archive.image.search.CandidateImpl;
 import com.dart.archive.image.search.ip.surf.InterestPoint;
 import com.dart.archive.image.search.ip.surf.Matcher;
 
@@ -47,8 +46,6 @@ public class InterestingPointsImageSearcher extends AImageSearcher {
 	protected void populateCandidate(Collection<Candidate> candidates, File file) {
 		
 		List<InterestPoint> points = findInterestPoints(file);
-		System.out.print(points.size()+" ");
-//		System.out.println("found "+points.size()+" IPs for "+file.getAbsolutePath());
 		for (ImagePoints imagePoints : imagePointsList) {
 			List<InterestPoint> currentPoints = imagePoints.getPoints();
 			Map<InterestPoint, InterestPoint> matchedPointsDirect = Matcher.findMathes(points, currentPoints);
@@ -76,7 +73,6 @@ public class InterestingPointsImageSearcher extends AImageSearcher {
 		Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
 		for (File file : files) {
 			List<InterestPoint> points = findInterestPoints(file);
-			System.out.println("for "+file.getAbsolutePath()+" found "+points.size()+" IPs");
 			imagePointsList.add(new ImagePoints(file, points));
 		}
 	}
