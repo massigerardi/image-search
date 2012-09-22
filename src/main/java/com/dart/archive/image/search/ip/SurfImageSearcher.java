@@ -25,7 +25,7 @@ import com.dart.archive.image.search.ip.surf.Matcher;
  * @author massi
  *
  */
-public class InterestingPointsImageSearcher extends AImageSearcher {
+public class SurfImageSearcher extends AImageSearcher {
 
 	DecimalFormat twoDForm = new DecimalFormat("#.##");
 	
@@ -42,7 +42,6 @@ public class InterestingPointsImageSearcher extends AImageSearcher {
 	
 	Opener opener = new Opener();
 	
-	@Override
 	protected void populateCandidate(Collection<Candidate> candidates, File file) {
 		
 		List<InterestPoint> points = findInterestPoints(file);
@@ -64,7 +63,7 @@ public class InterestingPointsImageSearcher extends AImageSearcher {
 
 	String sources;
 
-	public InterestingPointsImageSearcher(String sources) {
+	public SurfImageSearcher(String sources) {
 		this.sources = sources;
 		init();
 	}
@@ -92,6 +91,5 @@ public class InterestingPointsImageSearcher extends AImageSearcher {
 		}
 		return result;
 	}
-	
 	
 }
