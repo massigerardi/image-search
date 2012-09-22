@@ -3,7 +3,6 @@ package com.dart.archive.image.search.ip;
 import static java.lang.Math.cos;
 import static java.lang.Math.round;
 import static java.lang.Math.sin;
-import ij.IJ;
 import ij.process.ImageProcessor;
 
 import java.util.Arrays;
@@ -14,7 +13,6 @@ import com.dart.archive.image.search.ip.surf.Detector;
 import com.dart.archive.image.search.ip.surf.IntegralImage;
 import com.dart.archive.image.search.ip.surf.InterestPoint;
 import com.dart.archive.image.search.ip.surf.Params;
-import com.dart.archive.image.search.ip.surf.Statistics;
 
 
 // TODO: license info in all files?
@@ -48,15 +46,12 @@ public class IJFacade {
 		begin = System.currentTimeMillis();
 		List<InterestPoint> ipts = Detector.fastHessian(intImg, p);
 		end = System.currentTimeMillis();
-		p.getStatistics().timeSURFDetector = end - begin;
 		
-		p.getStatistics().detectedIPs = ipts.size();
 		float[] strengthOfIPs = new float[ipts.size()];
 		for (int i = 0; i < ipts.size(); i++) {
 			strengthOfIPs[i] = ipts.get(i).strength;
 		}
 		Arrays.sort(strengthOfIPs);
-		p.getStatistics().strengthOfIPs = strengthOfIPs;
 		
 		
 		// Describe interest points with SURF-descriptor
@@ -67,8 +62,6 @@ public class IJFacade {
 		for (InterestPoint ipt: ipts)
 			Descriptor.computeAndSetDescriptor(ipt, intImg, p);
 		end = System.currentTimeMillis();
-		p.getStatistics().timeSURFDescriptor = end - begin;
-
 		
 		setLastResult(ipts);
 		return ipts;
@@ -145,55 +138,6 @@ public class IJFacade {
 			img.setColor(p.getLightPointColor());
 		img.drawDot(x, y);
 		
-		// TODO: Draw motion (x,y) -> (x+dx, y+dy) ?   Or (x-dx, y-dy) -> (x,y) ?
-		// (OpenSURF uses 'tailSize' parameter to indicate wether to draw the motion.)
 	}
-	
-	public static void initializeStatisticsWindow() {
-		IJ.setColumnHeadings(Statistics.getEmptyHeadersForIJ());
-		IJ.write("Program Version:\t"+Params.programVersion);
-		IJ.write("");
 
-	}
-	public static void displayStatistics(Params p) {
-		Statistics stat = p.getStatistics();
-		IJ.write("Start Time:\t"+stat.startTime);
-		IJ.write("Image:\t"+stat.imageTitle);
-		IJ.write("");
-		IJ.write("Params");
-		IJ.write("Octaves:\t"+p.getOctaves());
-		IJ.write("Layers:\t"+p.getLayers());
-		IJ.write("Threshold:\t"+IJ.d2s(p.getThreshold(), 5));
-		IJ.write("InitSamplStep:\t"+p.getInitStep());
-		IJ.write("");
-		
-		IJ.write("Detector Statistics");
-		IJ.write(Statistics.getHeadersForIJ());
-		String[] rows = stat.getRowsForIJ();
-		for (String s : rows)
-			IJ.write(s);
-		IJ.write("");
-		
-		int detectedIPs = p.getStatistics().detectedIPs;
-		IJ.write("Interest Points:\t"+detectedIPs);
-		IJ.write("");
-
-		IJ.write("Strength of Interest Points");
-		float[] strengthOfIPs = p.getStatistics().strengthOfIPs;
-		IJ.write("Min:\t"+IJ.d2s(strengthOfIPs[0], 10));
-		IJ.write("Max:\t"+IJ.d2s(strengthOfIPs[detectedIPs-1], 10));
-		IJ.write("Median:\t"+IJ.d2s(strengthOfIPs[detectedIPs/2], 10));
-		float sum = 0; for (float v : strengthOfIPs) sum += v;
-		IJ.write("Average:\t"+IJ.d2s(sum/detectedIPs, 10));
-		IJ.write("");
-
-		IJ.write("Time (ms)");
-		IJ.write("IntegralImage:\t"+stat.timeIntegralImage);
-		IJ.write("Detector:\t"+stat.timeSURFDetector);
-		IJ.write("Descriptor:\t"+stat.timeSURFDescriptor);
-		IJ.write("");
-		IJ.write("");
-		
-	}
-	
 }

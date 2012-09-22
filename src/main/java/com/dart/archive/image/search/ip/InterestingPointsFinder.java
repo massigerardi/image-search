@@ -34,8 +34,8 @@ public class InterestingPointsFinder {
 		Arrays.sort(strengthOfIPs);
 		
 		// Describe interest points with SURF-descriptor
-//		for (InterestPoint ipt: ipts)
-//			Descriptor.computeAndSetOrientation(ipt, image);
+		for (InterestPoint ipt: ipts)
+			Descriptor.computeAndSetOrientation(ipt, image);
 		for (InterestPoint ipt: ipts)
 			Descriptor.computeAndSetDescriptor(ipt, image, new Params());
 

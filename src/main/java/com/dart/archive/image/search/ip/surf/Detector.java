@@ -123,9 +123,6 @@ public class Detector {
 					} // end for (x)
 				} // end for (y)
 				
-				p.getStatistics().add(octave, layer, countIPCandidates, countThresholded, countSuppressed, countInterpolationNotSucceed, countBadInterpolationResult, countIP);
-				
-
 			} // end for (layer)
 			
 			// End Non-maximum suppression for current layer
