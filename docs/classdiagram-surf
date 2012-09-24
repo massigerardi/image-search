@@ -1,0 +1,44 @@
+@startuml
+
+abstract class AImageSearcher {
+#void search(Collection<Candidate> candidates, File file)
+}
+
+abstract class ACandidate {
+}
+
+package com.dart.archive.image.search.surf
+class InterestPointsSearcher {
+    +InterestPointsSearcher(String folderName)
+}
+
+AImageSearcher <|-- InterestPointsSearcher
+
+class ImageInterestPoints {
+    ~File image
+    ~List<InterestPoint> points
+    +ImageInterestPoints(File image, List<InterestPoint> points)
+}
+
+class ImageSurfCandidate {
+    ~File image
+    ~double distance
+    ~int interestingPoints
+    +ImageSurfCandidate(File image, double distance, int interestingPoints)
+}
+
+ACandidate <|-- ImageSurfCandidate
+
+class InterestPointsFinder {
+    +List<InterestPoint> findInterestingPoints(ImageProcessor processor)
+}
+
+class InterestPointsUtils {
+    +void displayInterestingPoints(Map<InterestPoint,InterestPoint> matchedPoints, File image, List<InterestPoint> points, File candidate, List<InterestPoint> list)
+}
+
+InterestPointsSearcher --> "*" ImageInterestPoints: images
+InterestPointsSearcher --> "1" InterestPointsFinder: finder
+
+end package
+@enduml

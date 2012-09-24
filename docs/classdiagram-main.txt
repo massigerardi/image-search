@@ -1,0 +1,87 @@
+@startuml
+
+interface ImageSearcher {
+Collection search(File image)
+}
+
+abstract class AImageSearcher {
+#void search(Collection<Candidate> candidates, File file)
+}
+
+interface Candidate {
+    Double getScore()
+    File getImage()
+}
+
+abstract class ACandidate {
+    +int compareTo(Candidate other)
+}
+
+package com.dart.archive.image.search.utils
+class ImageUtils {
+    +void resizeFolder(int width, int height, File folder)
+    +void resizeFolder(int size, File folder)
+    +BufferedImage resize(int width, int height, String file)
+    +BufferedImage resize(int width, int height, BufferedImage image)
+    +BufferedImage resizeAndSave(int width, int height, String src, String dest)
+    +BufferedImage resize(int size, String file)
+    +BufferedImage resizeAndSave(int size, String src, String dest)
+}
+end package
+
+package com.dart.archive.image.search.color
+class ImageDescriptor {
+    +ImageDescriptor(Color[][] signature, File image)
+    +Color[][] getSignature()
+    +File getImage()
+}
+class NaiveColorImageSearcher {
+    +NaiveColorImageSearcher(String folderName)
+}
+AImageSearcher <|-- NaiveColorImageSearcher
+NaiveColorImageSearcher --> "*" ImageDescriptor: images
+end package
+
+package com.dart.archive.image.search.hash
+class ImageHashCalculator {
+    +ImageHash(String hash, File image)
+    +String getHash()
+    +File getImage()
+}
+
+class ImagePHash {
+    +ImagePHash(int size, int smallerSize)
+    +double distance(String s1, String s2)
+    +String getHash(InputStream is)
+}
+class PHashImageSearcher {
+    +PHashImageSearcher(String folderName)
+}
+AImageSearcher <|-- PHashImageSearcher
+PHashImageSearcher --> "*" ImageHash: images
+PHashImageSearcher --> "1" ImageHashCalculator: imageHashCalculator
+end package
+
+package com.dart.archive.image.search.surf
+class InterestPointsSearcher {
+    +InterestPointsSearcher(String folderName)
+}
+AImageSearcher <|-- InterestPointsSearcher
+end package
+
+class CandidateImpl {
+    ~Double score
+    ~File image
+    +CandidateImpl(Double score, File image)
+    +Double getScore()
+    +File getImage()
+    +String toString()
+}
+
+
+ImageSearcher <|.. AImageSearcher
+Comparable <|.. Candidate
+Candidate <|.. ACandidate
+ACandidate <|-- CandidateImpl
+
+@enduml
