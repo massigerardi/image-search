@@ -1,9 +1,13 @@
 @startuml 
-== Initialisation ==
+== Initialitation ==
+create ImageSearchService
+[--> ImageSearchService : new
+
 create ImageSearcher
-[--> ImageSearcher : New
+[--> ImageSearcher : new
 
 ImageSearcher --> FileUtils : listFiles()
+ImageSearcher <-- FileUtils : files
 loop files
 ImageSearcher --> ImageSearcher: create ImageDescriptors
 end
@@ -23,7 +27,6 @@ loop imageDescriptor
         create Candidate
         ImageSearcher --> Candidate : new 
         ImageSearcher --> List : add(candidate)
-        ImageSearcher <-- List
     end 
 end           
 ImageSearchService <-- ImageSearcher: return candidates

@@ -1,0 +1,16 @@
+@startuml
+class ImageUtils {
+    -Opener opener
+    +void main(String[] args)
+    +void resizeFolder(int width, int height, File folder)
+    +void resizeFolder(int size, File folder)
+    -String createDest(String absolutePath)
+    -String createDest(String fileName, String dest)
+    -ImageUtils()
+    +BufferedImage resize(int width, int height, String file)
+    +BufferedImage resize(int width, int height, BufferedImage image)
+    +BufferedImage resizeAndSave(int width, int height, String src, String dest)
+    +BufferedImage resize(int size, String file)
+    +BufferedImage resizeAndSave(int size, String src, String dest)
+}
+@enduml
