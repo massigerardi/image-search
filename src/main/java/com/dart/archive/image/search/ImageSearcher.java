@@ -5,7 +5,6 @@ package com.dart.archive.image.search;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author massi
@@ -13,5 +12,5 @@ import java.util.List;
  */
 public interface ImageSearcher {
 
-	Collection<Candidate> compare(File image);
+	Collection<Candidate> search(File image);
 }

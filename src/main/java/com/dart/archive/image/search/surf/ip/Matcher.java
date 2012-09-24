@@ -1,4 +1,4 @@
-package com.dart.archive.image.search.ip.surf;
+package com.dart.archive.image.search.surf.ip;
 
 import static java.lang.Math.round;
 import ij.ImagePlus;

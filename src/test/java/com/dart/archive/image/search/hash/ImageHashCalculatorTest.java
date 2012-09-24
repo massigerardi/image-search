@@ -1,9 +1,10 @@
 /**
  * 
  */
-package com.dart.archive.image.search;
+package com.dart.archive.image.search.hash;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,13 +14,13 @@ import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dart.archive.image.search.hash.ImagePHash;
+import com.dart.archive.image.search.hash.ImageHashCalculator;
 
 /**
  * @author massi
  *
  */
-public class ImagePHashTest {
+public class ImageHashCalculatorTest {
 
 	String imageA;
 	String imageB;
@@ -47,12 +48,12 @@ public class ImagePHashTest {
 	 */
 	@Test
 	public void testDistanceSameImage() throws FileNotFoundException, Exception {
-		ImagePHash imagePHash = new ImagePHash();
-		String hashA = imagePHash.getHash(new FileInputStream(new File(imageA)));
-		String hashB = imagePHash.getHash(new FileInputStream(new File(imageA)));
+		ImageHashCalculator imageHashCalculator = new ImageHashCalculator();
+		String hashA = imageHashCalculator.getHash(new FileInputStream(new File(imageA)));
+		String hashB = imageHashCalculator.getHash(new FileInputStream(new File(imageA)));
 		System.out.println("'"+hashA+"'");
 		System.out.println("'"+hashB+"'");
-		double distance = imagePHash.distance(hashA, hashB);
+		double distance = imageHashCalculator.distance(hashA, hashB);
 		System.out.println(distance);
 		assertEquals(1.0d, distance, 0);
 	}
@@ -64,14 +65,14 @@ public class ImagePHashTest {
 	 */
 	@Test
 	public void testDistance() throws FileNotFoundException, Exception {
-		ImagePHash imagePHash = new ImagePHash();
-		String hashA = imagePHash.getHash(new FileInputStream(new File(imageA)));
-		String hashB = imagePHash.getHash(new FileInputStream(new File(imageB)));
+		ImageHashCalculator imageHashCalculator = new ImageHashCalculator();
+		String hashA = imageHashCalculator.getHash(new FileInputStream(new File(imageA)));
+		String hashB = imageHashCalculator.getHash(new FileInputStream(new File(imageB)));
 		System.out.println("'"+hashA+"'");
 		System.out.println("'"+hashB+"'");
-		double distance = imagePHash.distance(hashA, hashB);
+		double distance = imageHashCalculator.distance(hashA, hashB);
 		System.out.println(distance);
-		assertEquals(0.94d, distance, 0.00d);
+		assertTrue(distance>0.5d);
 	}
 
 	/**
@@ -81,26 +82,13 @@ public class ImagePHashTest {
 	 */
 	@Test
 	public void testDistance6416() throws FileNotFoundException, Exception {
-		ImagePHash imagePHash = new ImagePHash(64, 8);
-		String hashA = imagePHash.getHash(new FileInputStream(new File(imageA)));
-		String hashB = imagePHash.getHash(new FileInputStream(new File(imageB)));
+		ImageHashCalculator imageHashCalculator = new ImageHashCalculator(64, 8);
+		String hashA = imageHashCalculator.getHash(new FileInputStream(new File(imageA)));
+		String hashB = imageHashCalculator.getHash(new FileInputStream(new File(imageB)));
 		System.out.println("'"+hashA+"'");
 		System.out.println("'"+hashB+"'");
-		double distance = imagePHash.distance(hashA, hashB);
-		assertEquals(0.94d, distance, 0.00d);
+		double distance = imageHashCalculator.distance(hashA, hashB);
+		assertTrue(distance>0.5d);
 	}
-
-	/**
-	 * Test method for {@link com.dart.archive.image.search.hash.ImagePHash#getHash(java.io.InputStream)}.
-	 * @throws Exception 
-	 * @throws FileNotFoundException 
-	 */
-	@Test
-	public void testGetHash() throws FileNotFoundException, Exception {
-		ImagePHash imagePHash = new ImagePHash();
-		String hash = imagePHash.getHash(new FileInputStream(new File(imageA)));
-		System.out.println(hash);
-		assertEquals("0000000011000110000000000100000000000100100000100", hash);
-	}
-
+	
 }

@@ -14,7 +14,7 @@ public abstract class ACandidate implements Candidate {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Candidate other) {
-		return other.getDistance().compareTo(getDistance());
+		return other.getScore().compareTo(getScore());
 	}
 
 

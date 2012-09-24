@@ -1,4 +1,4 @@
-package com.dart.archive.image.search.ip.surf;
+package com.dart.archive.image.search.surf.ip;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.atan;
@@ -39,7 +39,7 @@ public class Descriptor {
 	 * Depends on the <code>orientation</code> field of the interest point.
 	 *  (I.e. in case of non-upright SURF the orientation must be computed and assigned before.) 
 	 */
-	public static void computeAndSetDescriptor(InterestPoint ipt, IntegralImage intImg, Params p) {
+	public static void computeAndSetDescriptor(InterestPoint ipt, IntegralImage intImg, Settings p) {
 		float co, si;
 		if (p.isUpright()) {
 			co = 1;

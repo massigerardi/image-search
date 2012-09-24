@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.dart.archive.image.search.ip;
+package com.dart.archive.image.search.surf;
 
 import java.io.File;
 
@@ -11,7 +11,7 @@ import com.dart.archive.image.search.ACandidate;
  * @author massi
  *
  */
-public class IPCandidate extends ACandidate {
+public class ImageSurfCandidate extends ACandidate {
 
 	File image;
 
@@ -19,7 +19,7 @@ public class IPCandidate extends ACandidate {
 	
 	int interestingPoints;
 	
-	public IPCandidate(File image, double distance, int interestingPoints) {
+	public ImageSurfCandidate(File image, double distance, int interestingPoints) {
 		super();
 		this.image = image;
 		this.distance = distance;
@@ -36,7 +36,7 @@ public class IPCandidate extends ACandidate {
 	/* (non-Javadoc)
 	 * @see com.dart.archive.image.search.Candidate#getDistance()
 	 */
-	public Double getDistance() {
+	public Double getScore() {
 		return distance;
 	}
 

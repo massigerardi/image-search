@@ -14,9 +14,9 @@ import org.junit.Test;
 import com.dart.archive.image.search.Candidate;
 import com.dart.archive.image.search.ImageSearcher;
 import com.dart.archive.image.search.ImageSearcherTest;
-import com.dart.archive.image.search.NaiveColorImageSearcher;
+import com.dart.archive.image.search.color.NaiveColorImageSearcher;
 import com.dart.archive.image.search.hash.PHashImageSearcher;
-import com.dart.archive.image.search.ip.SurfImageSearcher;
+import com.dart.archive.image.search.surf.InterestPointsSearcher;
 
 /**
  * @author massi
@@ -52,7 +52,7 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	@Test
 	public void testSearchByInterestingPoints() {
 		ImageSearchService service = new ImageSearchServiceImpl();
-		ImageSearcher searcher = new SurfImageSearcher(imagesFolder);
+		ImageSearcher searcher = new InterestPointsSearcher(imagesFolder);
 		service.setSearcher(searcher);
 		doTest(service);
 	}

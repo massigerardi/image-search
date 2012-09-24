@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.dart.archive.image.search.ip;
+package com.dart.archive.image.search.surf;
 
 import ij.ImagePlus;
 import ij.io.Opener;
@@ -18,34 +18,34 @@ import org.apache.commons.io.FileUtils;
 
 import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
-import com.dart.archive.image.search.ip.surf.InterestPoint;
-import com.dart.archive.image.search.ip.surf.Matcher;
+import com.dart.archive.image.search.surf.ip.InterestPoint;
+import com.dart.archive.image.search.surf.ip.Matcher;
 
 /**
  * @author massi
  *
  */
-public class SurfImageSearcher extends AImageSearcher {
+public class InterestPointsSearcher extends AImageSearcher {
 
 	DecimalFormat twoDForm = new DecimalFormat("#.##");
 	
-	List<ImagePoints> imagePointsList = new ArrayList<ImagePoints>();
+	List<ImageInterestPoints> imagePointsList = new ArrayList<ImageInterestPoints>();
 	
 	/**
 	 * @return the imagePointsList
 	 */
-	public List<ImagePoints> getImagePointsList() {
+	public List<ImageInterestPoints> getImagePointsList() {
 		return imagePointsList;
 	}
 
-	InterestingPointsFinder finder = new InterestingPointsFinder();
+	InterestPointsFinder finder = new InterestPointsFinder();
 	
 	Opener opener = new Opener();
 	
-	protected void populateCandidate(Collection<Candidate> candidates, File file) {
+	protected void search(Collection<Candidate> candidates, File file) {
 		
 		List<InterestPoint> points = findInterestPoints(file);
-		for (ImagePoints imagePoints : imagePointsList) {
+		for (ImageInterestPoints imagePoints : imagePointsList) {
 			List<InterestPoint> currentPoints = imagePoints.getPoints();
 			Map<InterestPoint, InterestPoint> matchedPointsDirect = Matcher.findMathes(points, currentPoints);
 			Map<InterestPoint, InterestPoint> matchedPointsReverse = Matcher.findMathes(currentPoints, points);
@@ -55,7 +55,7 @@ public class SurfImageSearcher extends AImageSearcher {
 //				InterestingPointsUtils.displayInterestingPoints(matchedPoints, file, points, imagePoints.getImage(), imagePoints.getPoints());
 				double distance = ((double)matchedPoints.size()/(double)points.size());
 				double result = (double)Math.round(distance * 100) / 100;
-				candidates.add(new IPCandidate(imagePoints.getImage(), result, matchedPoints.size()));
+				candidates.add(new ImageSurfCandidate(imagePoints.getImage(), result, matchedPoints.size()));
 			}
 		}
 	}
@@ -63,7 +63,7 @@ public class SurfImageSearcher extends AImageSearcher {
 
 	String sources;
 
-	public SurfImageSearcher(String sources) {
+	public InterestPointsSearcher(String sources) {
 		this.sources = sources;
 		init();
 	}
@@ -72,7 +72,7 @@ public class SurfImageSearcher extends AImageSearcher {
 		Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
 		for (File file : files) {
 			List<InterestPoint> points = findInterestPoints(file);
-			imagePointsList.add(new ImagePoints(file, points));
+			imagePointsList.add(new ImageInterestPoints(file, points));
 		}
 	}
 

@@ -16,7 +16,7 @@ public class CandidateImpl extends ACandidate {
 		this.image = image;
 	}
 
-	public Double getDistance() {
+	public Double getScore() {
 		return distance;
 	}
 

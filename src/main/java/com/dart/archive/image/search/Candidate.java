@@ -11,7 +11,7 @@ import java.io.File;
  */
 public interface Candidate extends Comparable<Candidate> {
 
-	Double getDistance();
+	Double getScore();
 	
 	File getImage();
 }

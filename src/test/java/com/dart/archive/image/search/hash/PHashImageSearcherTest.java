@@ -1,12 +1,13 @@
 /**
  * 
  */
-package com.dart.archive.image.search;
+package com.dart.archive.image.search.hash;
 
 import java.io.IOException;
 
 import org.junit.Test;
 
+import com.dart.archive.image.search.ImageSearcherTest;
 import com.dart.archive.image.search.hash.PHashImageSearcher;
 
 /**
@@ -16,7 +17,7 @@ import com.dart.archive.image.search.hash.PHashImageSearcher;
 public class PHashImageSearcherTest extends ImageSearcherTest {
 
 	/**
-	 * Test method for {@link com.dart.archive.image.search.NaiveColorImageSearcher#compare(java.awt.image.RenderedImage)}.
+	 * Test method for {@link com.dart.archive.image.search.color.NaiveColorImageSearcher#search(java.awt.image.RenderedImage)}.
 	 * @throws IOException 
 	 */
 	@Test

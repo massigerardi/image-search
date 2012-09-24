@@ -1,4 +1,4 @@
-package com.dart.archive.image.search.ip;
+package com.dart.archive.image.search.surf;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.round;
@@ -8,11 +8,11 @@ import ij.process.ImageProcessor;
 import java.util.Arrays;
 import java.util.List;
 
-import com.dart.archive.image.search.ip.surf.Descriptor;
-import com.dart.archive.image.search.ip.surf.Detector;
-import com.dart.archive.image.search.ip.surf.IntegralImage;
-import com.dart.archive.image.search.ip.surf.InterestPoint;
-import com.dart.archive.image.search.ip.surf.Params;
+import com.dart.archive.image.search.surf.ip.Descriptor;
+import com.dart.archive.image.search.surf.ip.Detector;
+import com.dart.archive.image.search.surf.ip.IntegralImage;
+import com.dart.archive.image.search.surf.ip.InterestPoint;
+import com.dart.archive.image.search.surf.ip.Settings;
 
 
 // TODO: license info in all files?
@@ -21,9 +21,9 @@ import com.dart.archive.image.search.ip.surf.Params;
  * See SURF_Test.java for example of usage.
  * @author Eugen Labun
  */
-public class IJFacade {
+public class InterestPointDrawer {
 	
-	private IJFacade() {}
+	private InterestPointDrawer() {}
 	
 	/** Cached last result. */ //TODO: sve multiple results as a map "img <-> I.P. list" ?
 	private static List<InterestPoint> lastResult = null;
@@ -32,52 +32,17 @@ public class IJFacade {
 	
 	//TODO: cache also the last parameter set!
 
-	/** Finds interest points using the default parameter. */
-	public static List<InterestPoint> detectAndDescribeInterestPoints(IntegralImage intImg) {
-		return detectAndDescribeInterestPoints(intImg, new Params());
-	}
-
-	/** Finds interest points using the provided parameter. */
-	public static List<InterestPoint> detectAndDescribeInterestPoints(IntegralImage intImg, Params p) {
-
-		long begin, end;
-		
-		// Detect interest points with Fast-Hessian
-		begin = System.currentTimeMillis();
-		List<InterestPoint> ipts = Detector.fastHessian(intImg, p);
-		end = System.currentTimeMillis();
-		
-		float[] strengthOfIPs = new float[ipts.size()];
-		for (int i = 0; i < ipts.size(); i++) {
-			strengthOfIPs[i] = ipts.get(i).strength;
-		}
-		Arrays.sort(strengthOfIPs);
-		
-		
-		// Describe interest points with SURF-descriptor
-		begin = System.currentTimeMillis();
-		if (!p.isUpright())
-			for (InterestPoint ipt: ipts)
-				Descriptor.computeAndSetOrientation(ipt, intImg);
-		for (InterestPoint ipt: ipts)
-			Descriptor.computeAndSetDescriptor(ipt, intImg, p);
-		end = System.currentTimeMillis();
-		
-		setLastResult(ipts);
-		return ipts;
-	}
-
 	/** Draws interest points onto suplied <code>ImageProcessor</code>. */
-	public static void drawInterestPoints(ImageProcessor img, List<InterestPoint> ipts, Params params) {
+	public static void drawInterestPoints(ImageProcessor img, List<InterestPoint> ipts, Settings settings) {
 		// TODO: 3 loops: 1) rectangles only, 2) orientation vectors only, 3) interest points only
 		// ^^ to be shure all interest points are visible!
 
 		for(InterestPoint ipt : ipts) 
-			drawSingleInterestPoint(img, params, ipt);
+			drawSingleInterestPoint(img, settings, ipt);
 	}
 	
 	
-	public static void drawSingleInterestPoint(ImageProcessor img, Params p, InterestPoint ipt) {
+	public static void drawSingleInterestPoint(ImageProcessor img, Settings p, InterestPoint ipt) {
 		int x = round(ipt.x);
 		int y = round(ipt.y);
 		float w = ipt.scale * 10; // for descriptor window

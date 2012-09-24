@@ -1,7 +1,6 @@
 package com.dart.archive.image.search.hash;
 
 
-import java.awt.Graphics2D;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
@@ -9,21 +8,23 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
+
+import com.dart.archive.image.utils.ImageUtils;
 /*
  * pHash-like image hash. 
  * Author: Elliot Shepherd (elliot@jarofworms.com
  * Based On: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
  */
-public class ImagePHash {
+public class ImageHashCalculator {
 
 	private int size = 32;
 	private int smallerSize = 8;
 	
-	public ImagePHash() {
+	public ImageHashCalculator() {
 		initCoefficients();
 	}
 	
-	public ImagePHash(int size, int smallerSize) {
+	public ImageHashCalculator(int size, int smallerSize) {
 		this.size = size;
 		this.smallerSize = smallerSize;
 		
@@ -52,7 +53,7 @@ public class ImagePHash {
 		 * This is really done to simplify the DCT computation and not 
 		 * because it is needed to reduce the high frequencies.
 		 */
-		img = resize(img, size, size);
+		img = ImageUtils.resize(size, size, img);
 		
 		/* 2. Reduce color. 
 		 * The image is reduced to a grayscale just to further simplify 
@@ -61,7 +62,6 @@ public class ImagePHash {
 		img = grayscale(img);
 		
 		double[][] vals = new double[size][size];
-		long start = System.currentTimeMillis();
 		for (int x = 0; x < img.getWidth(); x++) {
 			for (int y = 0; y < img.getHeight(); y++) {
 				vals[x][y] = getBlue(img, x, y);
@@ -73,7 +73,6 @@ public class ImagePHash {
 		 * and scalars. While JPEG uses an 8x8 DCT, this algorithm uses 
 		 * a 32x32 DCT.
 		 */
-		start = System.currentTimeMillis();
 		double[][] dctVals = applyDCT(vals);
 		
 		/* 4. Reduce the DCT. 
@@ -119,14 +118,6 @@ public class ImagePHash {
 		}
 		
 		return hash;
-	}
-	
-	private BufferedImage resize(BufferedImage image, int width,	int height) {
-		BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = resizedImage.createGraphics();
-		g.drawImage(image, 0, 0, width, height, null);
-		g.dispose();
-		return resizedImage;
 	}
 	
 	private ColorConvertOp colorConvert = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);

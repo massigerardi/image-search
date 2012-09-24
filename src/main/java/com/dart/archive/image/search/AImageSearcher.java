@@ -6,14 +6,11 @@ import java.util.TreeSet;
 
 public abstract class AImageSearcher implements ImageSearcher{
 
-	public AImageSearcher() {
-	}
-
-	protected abstract void populateCandidate(Collection<Candidate> candidates, File file);
+	protected abstract void search(Collection<Candidate> candidates, File file);
 	
-	public Collection<Candidate> compare(File file) {
+	public Collection<Candidate> search(File file) {
 		Collection<Candidate> result = new TreeSet<Candidate>();
-		populateCandidate(result, file);
+		search(result, file);
 		return result;
 	}
 

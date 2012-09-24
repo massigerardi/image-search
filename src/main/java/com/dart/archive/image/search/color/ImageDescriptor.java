@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.dart.archive.image.search;
+package com.dart.archive.image.search.color;
 
 import java.awt.Color;
 import java.io.File;

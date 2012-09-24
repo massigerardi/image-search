@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.dart.archive.image.search.ip;
+package com.dart.archive.image.search.surf;
 
 import ij.ImagePlus;
 import ij.io.Opener;
@@ -15,18 +15,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.dart.archive.image.search.ip.surf.InterestPoint;
-import com.dart.archive.image.search.ip.surf.Params;
+import com.dart.archive.image.search.surf.ip.InterestPoint;
+import com.dart.archive.image.search.surf.ip.Settings;
 
 /**
  * @author massi
  *
  */
-public class InterestingPointsUtils {
+public class InterestPointsUtils {
 
 	private static Opener opener = new Opener();
 	
-	private InterestingPointsUtils() {
+	private InterestPointsUtils() {
 	}
 	
 	public static void displayInterestingPoints(Map<InterestPoint, InterestPoint> matchedPoints, File image, List<InterestPoint> points, File candidate, List<InterestPoint> list) {
@@ -59,18 +59,18 @@ public class InterestingPointsUtils {
 		ImagePlus image4Copy = new ImagePlus(image4NewTitle, imageProcessor2Copy);
 		
 		for (Entry<InterestPoint, InterestPoint> pair : matchedPoints.entrySet()) {
-			IJFacade.drawSingleInterestPoint(image1ProcessorCopy, new Params(), pair.getKey());
-			IJFacade.drawSingleInterestPoint(imageProcessor2Copy, new Params(), pair.getValue());
-			IJFacade.drawSingleInterestPoint(image1ProcessorCopy, new Params(), pair.getValue());
-			IJFacade.drawSingleInterestPoint(imageProcessor2Copy, new Params(), pair.getKey());
+			InterestPointDrawer.drawSingleInterestPoint(image1ProcessorCopy, new Settings(), pair.getKey());
+			InterestPointDrawer.drawSingleInterestPoint(imageProcessor2Copy, new Settings(), pair.getValue());
+			InterestPointDrawer.drawSingleInterestPoint(image1ProcessorCopy, new Settings(), pair.getValue());
+			InterestPointDrawer.drawSingleInterestPoint(imageProcessor2Copy, new Settings(), pair.getKey());
 		}
 
 		for (InterestPoint interestPoint : points) {
-			IJFacade.drawSingleInterestPoint(image3ProcessorCopy, new Params(), interestPoint);
+			InterestPointDrawer.drawSingleInterestPoint(image3ProcessorCopy, new Settings(), interestPoint);
 		}
 		
 		for (InterestPoint interestPoint : list) {
-			IJFacade.drawSingleInterestPoint(imageProcessor4Copy, new Params(), interestPoint);
+			InterestPointDrawer.drawSingleInterestPoint(imageProcessor4Copy, new Settings(), interestPoint);
 		}
 		
 		image1Copy.show();

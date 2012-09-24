@@ -21,7 +21,7 @@ public class ImageSearchServiceImpl implements ImageSearchService {
 	 * @see com.dart.archive.image.search.service.ImageSearchService#search(java.io.File)
 	 */
 	public Collection<Candidate> search(File image) {
-		return searcher.compare(image);
+		return searcher.search(image);
 	}
 
 	/**

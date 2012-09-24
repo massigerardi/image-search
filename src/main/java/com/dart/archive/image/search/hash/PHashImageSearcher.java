@@ -24,7 +24,7 @@ import com.dart.archive.image.search.CandidateImpl;
  */
 public class PHashImageSearcher extends AImageSearcher implements ImageSearcher {
 	
-	ImagePHash imagePHash = new ImagePHash();
+	ImageHashCalculator imageHashCalculator = new ImageHashCalculator();
 	String folderName;
 	List<ImageHash> images;
 	public PHashImageSearcher(String folderName) {
@@ -38,7 +38,7 @@ public class PHashImageSearcher extends AImageSearcher implements ImageSearcher 
 		Collection<File> images = FileUtils.listFiles(folder, new String[] {"jpg"}, true);
 		for (File image : images) {
 			try {
-				String hash = imagePHash.getHash(new FileInputStream(image));
+				String hash = imageHashCalculator.getHash(new FileInputStream(image));
 				ImageHash imageHash = new ImageHash(hash, image);
 				this.images.add(imageHash);
 			} catch (FileNotFoundException e) {
@@ -53,11 +53,11 @@ public class PHashImageSearcher extends AImageSearcher implements ImageSearcher 
 	}
 
 	@Override
-	protected void populateCandidate(Collection<Candidate> candidates, File file) {
+	protected void search(Collection<Candidate> candidates, File file) {
 		try {
-			String hash = imagePHash.getHash(new FileInputStream(file));
+			String hash = imageHashCalculator.getHash(new FileInputStream(file));
 			for (ImageHash imageHash : images) {
-				Double distance = imagePHash.distance(hash, imageHash.getHash());
+				Double distance = imageHashCalculator.distance(hash, imageHash.getHash());
 				DecimalFormat twoDForm = new DecimalFormat("#.##");
 				double result = (double)Math.round(distance * 100) / 100;
 				Candidate candidate = new CandidateImpl(Double.valueOf(twoDForm.format(result)), imageHash.getImage());

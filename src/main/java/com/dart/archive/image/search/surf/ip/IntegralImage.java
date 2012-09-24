@@ -1,6 +1,5 @@
-package com.dart.archive.image.search.ip.surf;
+package com.dart.archive.image.search.surf.ip;
 
-import ij.IJ;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
@@ -152,7 +151,6 @@ public class IntegralImage {
 			}
 			
 		} else {			// Should never happen.
-			IJ.error("SURF: IntegralImage", "Unknown image type.\nCannot proceed.");
 			return;
 		}
 		

@@ -55,7 +55,7 @@ public abstract class ImageSearcherTest {
 	
 	protected void compare(File file) throws IOException {
 		long start = System.currentTimeMillis();
-		Collection<Candidate> candidates = searcher.compare(file);
+		Collection<Candidate> candidates = searcher.search(file);
 		float end = (System.currentTimeMillis()-start);
 		int counter = 1;
 		int index = -1;

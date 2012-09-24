@@ -25,7 +25,22 @@ import org.apache.commons.lang.StringUtils;
 public class ImageUtils {
 
 	private static Opener opener = new Opener();
-	
+	/**
+	 * a main method to resize single image or content of folders
+	 * it accept the following arguments
+	 * java ImageUtils W[xH] file|folder
+	 * 
+	 *  where
+	 *  W is the Width
+	 *  H is the Height
+	 *  file is the file to resize
+	 *  folder is the folder to resize
+	 * 
+	 * if H is not used, then the image will be resized according to orientation
+	 * 
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		if (args.length<2) {
 			return;
@@ -55,9 +70,18 @@ public class ImageUtils {
 				}
 			}
 		}
-		
 	}
+
 	
+	/**
+	 * resize the images in a folder with the exact width and height provided
+	 * the proportion are not kept
+	 * the new images will have the original name with the suffix -th
+	 * @param width
+	 * @param height
+	 * @param folder the folder 
+	 * @throws IOException
+	 */
 	public static void resizeFolder(int width, int height, File folder) throws IOException {
 		System.out.println("resizing to "+width+"x"+height+" in folder "+folder.getAbsolutePath());
 		Collection<File> files = FileUtils.listFiles(folder, new String[] {"jpg", "JPG", "jpeg"}, false);
@@ -66,6 +90,15 @@ public class ImageUtils {
 		}
 	}
 	
+	/**
+	 * resize the images in a folder with a maximum size
+	 * the image will be resized according to their orientation
+	 * the new size will be applied to the maximum dimension
+	 * the proportion are kept
+	 * @param size
+	 * @param folder
+	 * @throws IOException
+	 */
 	public static void resizeFolder(int size, File folder) throws IOException {
 		System.out.println("resizing to "+size+" in folder "+folder.getAbsolutePath());
 		Collection<File> files = FileUtils.listFiles(folder, new String[] {"jpg", "JPG", "jpeg"}, false);
@@ -94,12 +127,43 @@ public class ImageUtils {
 	private  ImageUtils() {
 	}
 	
-	
+	/**
+	 * returns an image with the exact dimension provided
+	 * the proportion are not kept
+	 * @param width
+	 * @param height
+	 * @param file the file path for the image to be resized
+	 * @return
+	 */
 	public static BufferedImage resize(int width, int height, String file) {
 		ImagePlus image = opener.openImage(file);
 		return image.getProcessor().resize(width, height).getBufferedImage();
 	}
 	
+	/**
+	 * returns an image with the exact dimension provided
+	 * the proportion are not kept
+	 * @param width
+	 * @param height
+	 * @param image the image to be resized
+	 * @return
+	 */
+	public static BufferedImage resize(int width, int height, BufferedImage image) {
+		ImagePlus imagep = new ImagePlus("", image );
+		return imagep.getProcessor().resize(width, height).getBufferedImage();
+	}
+	
+	/**
+	 * returns an image with the exact dimension provided
+	 * the proportion are not kept
+	 * the image will be saved in the destination file
+	 * if destination file is null, the original name with suffix -th will be used
+	 * @param width
+	 * @param height
+	 * @param src the file path for the image to be resized
+	 * @param dest the destination file
+	 * @return
+	 */
 	public static BufferedImage resizeAndSave(int width, int height, String src, String dest) throws IOException {
 		dest = createDest(src, dest);
 		System.out.println("resizing to "+width+"x"+height+" file "+src+" to "+dest);
@@ -108,6 +172,16 @@ public class ImageUtils {
 		return image;
 	}
 	
+	/**
+	 * returns an image with the maximum dimension provided
+	 * the image will be resized according to their orientation
+	 * the new size will be applied to the maximum dimension
+	 * the proportion are kept
+	 * @param width
+	 * @param height
+	 * @param file the file path for the image to be resized
+	 * @return
+	 */
 	public static BufferedImage resize(int size, String file) {
 		ImagePlus image = opener.openImage(file);
 		RenderedImage renderedImage = image.getBufferedImage();
@@ -125,6 +199,19 @@ public class ImageUtils {
 		return image.getProcessor().resize(width, height).getBufferedImage();
 	}
 	
+	/**
+	 * returns an image with the maximum dimension provided
+	 * the image will be resized according to their orientation
+	 * the new size will be applied to the maximum dimension
+	 * the proportion are kept
+	 * the image will be saved in the destination file
+	 * if destination file is null, the original name with suffix -th will be used
+	 * @param width
+	 * @param height
+	 * @param src the file path for the image to be resized
+	 * @param dest the destination file
+	 * @return
+	 */
 	public static BufferedImage resizeAndSave(int size, String src, String dest) throws IOException {
 		dest = createDest(src, dest);
 		System.out.println("resizing to "+size+" file "+src+" to "+dest);

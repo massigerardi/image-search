@@ -11,6 +11,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Test;
 
+import com.dart.archive.image.search.color.NaiveColorImageSearcher;
+
 /**
  * @author massi
  *
@@ -30,7 +32,7 @@ public class NaiveColorImageSearcherTest extends ImageSearcherTest {
 	}
 
 	/**
-	 * Test method for {@link com.dart.archive.image.search.NaiveColorImageSearcher#compare(java.awt.image.RenderedImage)}.
+	 * Test method for {@link com.dart.archive.image.search.color.NaiveColorImageSearcher#search(java.awt.image.RenderedImage)}.
 	 * @throws IOException 
 	 */
 	@Test

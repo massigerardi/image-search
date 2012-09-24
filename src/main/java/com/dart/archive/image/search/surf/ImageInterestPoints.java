@@ -1,24 +1,24 @@
 /**
  * 
  */
-package com.dart.archive.image.search.ip;
+package com.dart.archive.image.search.surf;
 
 import java.io.File;
 import java.util.List;
 
-import com.dart.archive.image.search.ip.surf.InterestPoint;
+import com.dart.archive.image.search.surf.ip.InterestPoint;
 
 /**
  * @author massi
  *
  */
-public class ImagePoints {
+public class ImageInterestPoints {
 
 	File image;
 	
 	List<InterestPoint> points;
 
-	public ImagePoints(File image, List<InterestPoint> points) {
+	public ImageInterestPoints(File image, List<InterestPoint> points) {
 		super();
 		this.image = image;
 		this.points = points;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.dart.archive.image.search;
+package com.dart.archive.image.search.color;
 
 import ij.process.ColorProcessor;
 
@@ -18,6 +18,10 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 
+import com.dart.archive.image.search.AImageSearcher;
+import com.dart.archive.image.search.Candidate;
+import com.dart.archive.image.search.CandidateImpl;
+import com.dart.archive.image.search.ImageSearcher;
 import com.dart.archive.image.utils.ImageUtils;
 
 
@@ -143,7 +147,7 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	}
 
 	@Override
-	protected void populateCandidate(Collection<Candidate> candidates, File file) {
+	protected void search(Collection<Candidate> candidates, File file) {
 		try {
 			BufferedImage image = ImageIO.read(file);
 			// Put the reference, scaled, in the left part of the UI.

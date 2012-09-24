@@ -1,4 +1,4 @@
-package com.dart.archive.image.search.ip.surf;
+package com.dart.archive.image.search.surf.ip;
 
 import static java.lang.Math.abs;
 
@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Detector {
 
-	public static List<InterestPoint> fastHessian(IntegralImage img, Params p) {
+	public static List<InterestPoint> fastHessian(IntegralImage img, Settings p) {
 		
 		/** Determinant of hessian responses */
 		float[][][] det = new float[p.getLayers()][img.getWidth()][img.getHeight()];
@@ -76,33 +76,23 @@ public class Detector {
 				float v, xInterp, yInterp, scale;
 
 				// Statistics
-				int countIPCandidates = 0; 
-				int countThresholded = 0; 
-				int countSuppressed = 0;
-				int countInterpolationNotSucceed = 0;
-				int countBadInterpolationResult = 0;
-				int countIP = 0; 
 				
 				for(int y = margin; y < yBound; y += step) { // row
 					for(int x = margin; x < xBound; x += step) { // column
-						countIPCandidates++;
 
 						v = det[layer][x][y];
 						if (v < p.getThreshold()) {
-							countThresholded++;
 							continue;
 						}
 							
 
 						if (!isLocalMaximum(v, det, layer, x, y, step)) {
-							countSuppressed++;
 							continue;
 						}
 
 						// Interpolate maxima location within the 3x3x3 neighborhood
 						float[] X = interpolatePoint(det, layer, x, y, step);
 						if (X == null) {
-							countInterpolationNotSucceed++;
 							continue;
 						}
 
@@ -114,10 +104,7 @@ public class Detector {
 						if (scale >= 1 && xInterp >= 0 && xInterp < img.getWidth() && yInterp >= 0 && yInterp < img.getHeight()) { // <-- from OpenCV-2.0.0
 							// ^^ should be OK instead of "if (abs(xi) < 0.5f && abs(xr) < 0.5f && abs(xc) < 0.5f)"	(OpenSURF).
 							// The OpenCV-2.0.0 version leaves ~ 25% more IPs
-							countIP++;
 							res.add(new InterestPoint(xInterp, yInterp, det[layer][x][y], trace[layer][x][y], scale));
-						} else {
-							countBadInterpolationResult++;
 						}
 						
 					} // end for (x)
@@ -246,7 +233,7 @@ public class Detector {
 	static final float EPSILON = Float.MIN_VALUE*100; // 1.4e-45*100 = 1.4e-43
 
 	/** Two float values are considered to be equal if <code>abs(a-b) < EPSILON</code>.<p>
-	 * See {@linkplain IJFacade#EPSILON}. */
+	 * See {@linkplain InterestPointDrawer#EPSILON}. */
 	public static boolean equal(float f1, float f2) { return abs(f1-f2) < EPSILON; }
 
 }
