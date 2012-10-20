@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
@@ -31,6 +33,9 @@ public class InterestPointsSearcher extends AImageSearcher {
 	
 	List<ImageInterestPoints> imagePointsList = new ArrayList<ImageInterestPoints>();
 	
+	private static final Logger logger = LoggerFactory.getLogger(InterestPointsSearcher.class);
+
+
 	/**
 	 * @return the imagePointsList
 	 */
@@ -60,20 +65,24 @@ public class InterestPointsSearcher extends AImageSearcher {
 		}
 	}
 
-
+	
 	String sources;
 
-	public InterestPointsSearcher(String sources) {
-		this.sources = sources;
+	public InterestPointsSearcher(String imageHome, String sources) {
+		this.sources = imageHome +  sources;
 		init();
 	}
 
 	private void init() {
+		long now = System.currentTimeMillis();
 		Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
+		long listfiles = (System.currentTimeMillis() - now) / 1000;
+		logger.info("list files has taken: " + listfiles  + " secs");
 		for (File file : files) {
 			List<InterestPoint> points = findInterestPoints(file);
 			imagePointsList.add(new ImageInterestPoints(file, points));
 		}
+		logger.info("Create ImageInterestPoints has taken: " + (System.currentTimeMillis() - listfiles) / 1000  + " secs");		
 	}
 
 	private List<InterestPoint> findInterestPoints(File file) {
