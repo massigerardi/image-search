@@ -11,6 +11,10 @@
 			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
 		</repository>
 	</repositories>
+	<properties>
+		<org.slf4j-version>1.5.10</org.slf4j-version>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -23,10 +27,23 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${org.slf4j-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${org.slf4j-version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>gov.nih.imagej</groupId>
 			<artifactId>imagej</artifactId>
 			<version>1.46</version>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -38,5 +55,16 @@
 			<version>1.2.15</version>
 		</dependency>
 	</dependencies>
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
