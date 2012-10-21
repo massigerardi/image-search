@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
@@ -27,6 +28,8 @@ import com.dart.archive.image.search.surf.ip.Matcher;
  */
 public class InterestPointsSearcher extends AImageSearcher {
 
+	Logger logger = Logger.getLogger(InterestPointsSearcher.class);
+	
 	DecimalFormat twoDForm = new DecimalFormat("#.##");
 	
 	List<ImageInterestPoints> imagePointsList = new ArrayList<ImageInterestPoints>();
@@ -43,7 +46,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 	Opener opener = new Opener();
 	
 	protected void search(Collection<Candidate> candidates, File file) {
-		
+		logger.debug("searching...");
 		List<InterestPoint> points = findInterestPoints(file);
 		for (ImageInterestPoints imagePoints : imagePointsList) {
 			List<InterestPoint> currentPoints = imagePoints.getPoints();
@@ -58,6 +61,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 				candidates.add(new ImageSurfCandidate(imagePoints.getImage(), result, matchedPoints.size()));
 			}
 		}
+		logger.debug("found "+candidates.size()+" candidates");
 	}
 
 
@@ -70,10 +74,12 @@ public class InterestPointsSearcher extends AImageSearcher {
 
 	private void init() {
 		Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
+		logger.debug("files to analyze:"+files.size());
 		for (File file : files) {
 			List<InterestPoint> points = findInterestPoints(file);
 			imagePointsList.add(new ImageInterestPoints(file, points));
 		}
+		System.out.println();
 	}
 
 	private List<InterestPoint> findInterestPoints(File file) {
