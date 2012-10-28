@@ -30,7 +30,7 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	@Test
 	public void testSearchByColor() {
 		ImageSearchService service = new ImageSearchServiceImpl();
-		ImageSearcher searcher = new NaiveColorImageSearcher(imagesFolder);
+		ImageSearcher searcher = new NaiveColorImageSearcher("",imagesFolder);
 		service.setSearcher(searcher);
 		doTest(service);
 	}
