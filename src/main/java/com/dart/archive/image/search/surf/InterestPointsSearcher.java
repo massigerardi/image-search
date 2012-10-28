@@ -11,8 +11,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -55,19 +57,37 @@ public class InterestPointsSearcher extends AImageSearcher {
 			Map<InterestPoint, InterestPoint> matchedPointsDirect = Matcher.findMathes(points, currentPoints);
 			Map<InterestPoint, InterestPoint> matchedPointsReverse = Matcher.findMathes(currentPoints, points);
 			Map<InterestPoint, InterestPoint> matchedPoints = intersection(matchedPointsDirect, matchedPointsReverse);
-			
-			if (matchedPoints.size() > 5) {
-//				InterestingPointsUtils.displayInterestingPoints(matchedPoints, file, points, imagePoints.getImage(), imagePoints.getPoints());
-				double distance = ((double)matchedPoints.size()/(double)points.size());
-				double result = (double)Math.round(distance * 100) / 100;
+//				InterestPointsUtils.displayInterestingPoints(matchedPoints, file, points, imagePoints.getImage(), imagePoints.getPoints());
+			double distance = ((double)matchedPoints.size()/(double)points.size());
+			double result = (double)Math.round(distance * 100) / 100;
+			if (result>0) {		
 				candidates.add(new ImageSurfCandidate(imagePoints.getImage(), result, matchedPoints.size()));
+			}
+		}
+		filter(candidates);
+		
+	}
+
+	double threshold = 0.25d;
+	public double getThreshold() {return threshold;}
+	public void setThreshold(double threshold) {this.threshold = threshold;}
+
+	private void filter(Collection<Candidate> candidates) {
+		Collection<Candidate> tempCandidates = new TreeSet<Candidate>(candidates);
+		Double headScore = null;
+		for (Candidate candidate : tempCandidates) {
+			if (headScore==null) {
+				headScore = candidate.getScore();
+			}
+			double difference = candidate.getScore()/headScore;
+			if ((difference)<threshold) {
+				candidates.remove(candidate);
 			}
 		}
 	}
 
-	
 	String sources;
-
+	
 	public InterestPointsSearcher(String imageHome, String sources) {
 		this.sources = imageHome +  sources;
 		init();
@@ -76,13 +96,11 @@ public class InterestPointsSearcher extends AImageSearcher {
 	private void init() {
 		long now = System.currentTimeMillis();
 		Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
-		long listfiles = (System.currentTimeMillis() - now) / 1000;
-		logger.info("list files has taken: " + listfiles  + " secs");
 		for (File file : files) {
 			List<InterestPoint> points = findInterestPoints(file);
 			imagePointsList.add(new ImageInterestPoints(file, points));
 		}
-		logger.info("Create ImageInterestPoints has taken: " + (System.currentTimeMillis() - listfiles) / 1000  + " secs");		
+		logger.debug("Create ImageInterestPoints for "+files.size()+" images has taken: " + (System.currentTimeMillis() - now) / 1000  + " secs");		
 	}
 
 	private List<InterestPoint> findInterestPoints(File file) {

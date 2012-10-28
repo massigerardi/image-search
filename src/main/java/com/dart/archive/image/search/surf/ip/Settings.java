@@ -7,10 +7,19 @@ public class Settings {
 
 	public final static String programVersion = "ImageJ SURF v2009-12-01";
 
-	public Settings() { 	
+	private Settings() { 	
 		
 	}
 
+	private static Settings instance;
+	public static Settings getSettings() {
+		if (instance==null) {
+			instance = new Settings();
+		}
+		return instance;
+	}
+	
+	
 	/////////////////////////////////////////////////////////////////////////7
 	// Detector params
 
@@ -54,12 +63,13 @@ public class Settings {
 	// NB: in C++ version 0.0004f (sometimes 0.0006f); in C# version 0.002f
 	// orig.SURF: double thres = 4.0; "Blob response treshold";  cvsurf: "hessianThreshold"
 	// private float threshold = 0.0002f; 
-	private float threshold = 0.0001f; 
+	private float threshold = 0.0000001f; 
 	public float getThreshold() {return threshold;}
+	public void setThreshold(float f) {threshold = f;}
 
 	/** The initial sampling step (1..6). Default is 2. <br>
 	 * Will be doubled for each next octave (see stepIncFactor). */
-	private int initStep = 2; // orig.SURF: 2 (2 gives less IPs than 1 but much faster)
+	private int initStep = 1; // orig.SURF: 2 (2 gives less IPs than 1 but much faster)
 	public int getInitStep() {return initStep;}
 
 	private int stepIncFactor = 2;

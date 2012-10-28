@@ -24,7 +24,6 @@ public abstract class ImageSearcherTest {
 	protected String imagesFolder;
 	protected String testFolder;
 	
-	
 	ImageSearcher searcher;
 
 	public void setSearcher(ImageSearcher searcher) {
@@ -42,7 +41,6 @@ public abstract class ImageSearcherTest {
 		System.setProperty("dart.images.home", "");		
 		imagesFolder = properties.getProperty("images");
 		testFolder   = properties.getProperty("search");
-		
 	}
 
 	protected void compare() throws IOException {

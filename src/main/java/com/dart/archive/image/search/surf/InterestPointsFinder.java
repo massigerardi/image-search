@@ -25,7 +25,7 @@ public class InterestPointsFinder {
 		IntegralImage image = new IntegralImage(processor, true);
 		
 		// Detect interest points with Fast-Hessian
-		List<InterestPoint> ipts = Detector.fastHessian(image, new Settings());
+		List<InterestPoint> ipts = Detector.fastHessian(image, Settings.getSettings());
 		
 		float[] strengthOfIPs = new float[ipts.size()];
 		for (int i = 0; i < ipts.size(); i++) {
@@ -37,7 +37,7 @@ public class InterestPointsFinder {
 		for (InterestPoint ipt: ipts)
 			Descriptor.computeAndSetOrientation(ipt, image);
 		for (InterestPoint ipt: ipts)
-			Descriptor.computeAndSetDescriptor(ipt, image, new Settings());
+			Descriptor.computeAndSetDescriptor(ipt, image, Settings.getSettings());
 
 		return ipts;
 
