@@ -36,8 +36,8 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	
 	List<ImageDescriptor> images;
 	
-	public NaiveColorImageSearcher(String imagesHome, String reference) {
-		this( (imagesHome + reference), 5, 60);
+	public NaiveColorImageSearcher(String reference) {
+		this(reference, 5, 60);
 	}
 
 	public NaiveColorImageSearcher(String reference, int zones, int zoneSize) {

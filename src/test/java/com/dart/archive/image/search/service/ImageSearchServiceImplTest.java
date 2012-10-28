@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.dart.archive.image.search.Candidate;
@@ -25,14 +24,13 @@ import com.dart.archive.image.search.surf.InterestPointsSearcher;
  */
 public class ImageSearchServiceImplTest extends ImageSearcherTest {
 
-
 	/**
 	 * Test method for {@link com.dart.archive.image.search.service.ImageSearchServiceImpl#search(java.io.File)}.
 	 */
 	@Test
 	public void testSearchByColor() {
 		ImageSearchService service = new ImageSearchServiceImpl();
-		ImageSearcher searcher = new NaiveColorImageSearcher("", imagesFolder);
+		ImageSearcher searcher = new NaiveColorImageSearcher(imagesFolder);
 		service.setSearcher(searcher);
 		doTest(service);
 	}

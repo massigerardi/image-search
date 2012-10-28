@@ -13,6 +13,4 @@ import java.util.Collection;
 public interface ImageSearcher {
 
 	Collection<Candidate> search(File image);
-	
-	public final static String DART_IMAGES_HOME = "dart.images.home";
 }

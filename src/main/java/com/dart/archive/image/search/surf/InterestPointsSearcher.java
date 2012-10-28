@@ -11,14 +11,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
@@ -31,13 +29,12 @@ import com.dart.archive.image.search.surf.ip.Matcher;
  */
 public class InterestPointsSearcher extends AImageSearcher {
 
+	Logger logger = Logger.getLogger(InterestPointsSearcher.class);
+	
 	DecimalFormat twoDForm = new DecimalFormat("#.##");
 	
 	List<ImageInterestPoints> imagePointsList = new ArrayList<ImageInterestPoints>();
 	
-	private static final Logger logger = LoggerFactory.getLogger(InterestPointsSearcher.class);
-
-
 	/**
 	 * @return the imagePointsList
 	 */
@@ -50,7 +47,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 	Opener opener = new Opener();
 	
 	protected void search(Collection<Candidate> candidates, File file) {
-		
+		logger.debug("searching...");
 		List<InterestPoint> points = findInterestPoints(file);
 		for (ImageInterestPoints imagePoints : imagePointsList) {
 			List<InterestPoint> currentPoints = imagePoints.getPoints();

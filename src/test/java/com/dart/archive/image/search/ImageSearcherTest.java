@@ -38,7 +38,6 @@ public abstract class ImageSearcherTest {
 	public void setUp() throws Exception {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream("src/test/resources/test.properties"));
-		System.setProperty("dart.images.home", "");		
 		imagesFolder = properties.getProperty("images");
 		testFolder   = properties.getProperty("search");
 	}
