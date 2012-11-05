@@ -30,7 +30,7 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	@Test
 	public void testSearchByColor() {
 		ImageSearchService service = new ImageSearchServiceImpl();
-		ImageSearcher searcher = new NaiveColorImageSearcher("",imagesFolder);
+		ImageSearcher searcher = new NaiveColorImageSearcher(imagesFolder);
 		service.setSearcher(searcher);
 		doTest(service);
 	}
@@ -41,7 +41,7 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	@Test
 	public void testSearchByHash() {
 		ImageSearchService service = new ImageSearchServiceImpl();
-		ImageSearcher searcher = new PHashImageSearcher(imagesFolder);
+		ImageSearcher searcher = new PHashImageSearcher(new File(imagesFolder).getAbsolutePath());
 		service.setSearcher(searcher);
 		doTest(service);
 	}
@@ -52,7 +52,7 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	@Test
 	public void testSearchByInterestingPoints() {
 		ImageSearchService service = new ImageSearchServiceImpl();
-		ImageSearcher searcher = new InterestPointsSearcher("", imagesFolder);
+		ImageSearcher searcher = new InterestPointsSearcher(imagesFolder);
 		service.setSearcher(searcher);
 		doTest(service);
 	}

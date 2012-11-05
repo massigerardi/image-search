@@ -37,9 +37,9 @@ public class NaiveColorImageSearcherTest extends ImageSearcherTest {
 	 */
 	@Test
 	public void testCompare() throws IOException {
-		Collection<File> files = FileUtils.listFiles(new File(imagesFolder), new String[] {"jpg", "jpeg"}, true);
+		Collection<File> files = FileUtils.listFiles(new File(imagesRootFolder,imagesFolder), new String[] {"jpg", "jpeg"}, true);
 		long start = System.currentTimeMillis();
-		setSearcher(new NaiveColorImageSearcher("",imagesFolder, 5, 60));
+		setSearcher(new NaiveColorImageSearcher(imagesFolder, 5, 60));
 		System.out.println("loaded "+files.size()+"images in "+(System.currentTimeMillis()-start)+"ms");
 		compare();
 	}

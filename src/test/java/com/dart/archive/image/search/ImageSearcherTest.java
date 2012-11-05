@@ -21,6 +21,7 @@ import org.junit.Before;
  */
 public abstract class ImageSearcherTest {
 
+	protected String imagesRootFolder;
 	protected String imagesFolder;
 	protected String testFolder;
 	
@@ -38,6 +39,7 @@ public abstract class ImageSearcherTest {
 	public void setUp() throws Exception {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream("src/test/resources/test.properties"));
+		imagesRootFolder = properties.getProperty("imagesRoot");
 		imagesFolder = properties.getProperty("images");
 		testFolder   = properties.getProperty("search");
 	}

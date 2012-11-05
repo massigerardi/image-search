@@ -3,6 +3,7 @@
  */
 package com.dart.archive.image.search.hash;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class PHashImageSearcherTest extends ImageSearcherTest {
 	@Test
 	public void testCompare() throws IOException {
 		long start = System.currentTimeMillis();
-		setSearcher(new PHashImageSearcher(imagesFolder));
+		setSearcher(new PHashImageSearcher(new File(imagesRootFolder, imagesFolder).getAbsolutePath()));
 		System.out.println("loaded images in "+(System.currentTimeMillis()-start)+"ms");
 		compare();
 	}

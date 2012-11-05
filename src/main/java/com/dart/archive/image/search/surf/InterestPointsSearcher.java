@@ -85,8 +85,8 @@ public class InterestPointsSearcher extends AImageSearcher {
 
 	String sources;
 	
-	public InterestPointsSearcher(String imageHome, String sources) {
-		this.sources = imageHome +  sources;
+	public InterestPointsSearcher(String sources) {
+		this.sources = new File(sources).getAbsolutePath();
 		init();
 	}
 

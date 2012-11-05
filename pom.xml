@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.dart.archive</groupId>
 	<artifactId>image.search</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3</version>
 	<repositories>
 		<repository>
 			<id>thirdparty-releases</id>
