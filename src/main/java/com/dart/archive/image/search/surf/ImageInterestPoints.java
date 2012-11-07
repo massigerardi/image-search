@@ -4,6 +4,7 @@
 package com.dart.archive.image.search.surf;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 
 import com.dart.archive.image.search.surf.ip.InterestPoint;
@@ -12,7 +13,7 @@ import com.dart.archive.image.search.surf.ip.InterestPoint;
  * @author massi
  *
  */
-public class ImageInterestPoints {
+public class ImageInterestPoints implements Serializable {
 
 	File image;
 	
