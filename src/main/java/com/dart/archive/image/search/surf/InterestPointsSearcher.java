@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -34,6 +38,8 @@ public class InterestPointsSearcher extends AImageSearcher {
 	DecimalFormat twoDForm = new DecimalFormat("#.##");
 	
 	List<ImageInterestPoints> imagePointsList = new ArrayList<ImageInterestPoints>();
+	
+	private Cache interestPoints = CacheManager.getInstance().getCache("interestPoints");
 	
 	/**
 	 * @return the imagePointsList
@@ -96,13 +102,31 @@ public class InterestPointsSearcher extends AImageSearcher {
 	}
 
 	private void init() {
-		long now = System.currentTimeMillis();
-		Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
-		for (File file : files) {
-			List<InterestPoint> points = findInterestPoints(file);
-			imagePointsList.add(new ImageInterestPoints(file, points));
+		System.setProperty("net.sf.ehcache.enableShutdownHook","true");
+		try {
+			if (interestPoints.getDiskStoreSize() <= 0 ) {
+				logger.debug("interestPoints empty cache: " +  interestPoints);
+				Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
+				for (File file : files) {
+					List<InterestPoint> points = findInterestPoints(file);
+					ImageInterestPoints imageInterestPoints = new ImageInterestPoints(file, points);
+					imagePointsList.add(imageInterestPoints);
+					interestPoints.put(new Element(file.getName(), imageInterestPoints));
+				}
+				interestPoints.flush();
+//				logger.debug("Create ImageInterestPoints for "+files.size()+" images has taken: " + (System.currentTimeMillis() - now) / 1000  + " secs");					
+			}
+			else {
+				logger.debug("interestPoints full cache: " +  interestPoints);
+				for(Object key : interestPoints.getKeys()){
+					imagePointsList.add((ImageInterestPoints)interestPoints.get(key).getObjectValue());
+				}
+			}			
+		} catch (Exception exception) {
+			logger.error("init error",exception);
+		} finally {
+			CacheManager.getInstance().shutdown();			
 		}
-		logger.debug("Create ImageInterestPoints for "+files.size()+" images has taken: " + (System.currentTimeMillis() - now) / 1000  + " secs");		
 	}
 
 	private List<InterestPoint> findInterestPoints(File file) {

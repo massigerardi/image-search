@@ -5,6 +5,7 @@ import ij.IJ;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Scanner;
 // TODO move IJ-related code into IJFacade
 
 /** Interest Point class. */
-public class InterestPoint {
+public class InterestPoint implements Serializable {
 
 	/** Interpolated X-coordinate. */
 	public float x;
