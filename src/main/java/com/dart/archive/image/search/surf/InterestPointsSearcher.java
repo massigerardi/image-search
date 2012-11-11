@@ -104,24 +104,21 @@ public class InterestPointsSearcher extends AImageSearcher {
 	private void init() {
 		System.setProperty("net.sf.ehcache.enableShutdownHook","true");
 		try {
-			if (interestPoints.getDiskStoreSize() <= 0 ) {
-				logger.debug("interestPoints empty cache: " +  interestPoints);
-				Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
-				for (File file : files) {
+			Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
+			for (File file : files) {
+				String key = file.getName();
+				if (interestPoints.get(key)==null) {
 					List<InterestPoint> points = findInterestPoints(file);
 					ImageInterestPoints imageInterestPoints = new ImageInterestPoints(file, points);
 					imagePointsList.add(imageInterestPoints);
 					interestPoints.put(new Element(file.getName(), imageInterestPoints));
+					interestPoints.flush();
 				}
-				interestPoints.flush();
-//				logger.debug("Create ImageInterestPoints for "+files.size()+" images has taken: " + (System.currentTimeMillis() - now) / 1000  + " secs");					
-			}
-			else {
-				logger.debug("interestPoints full cache: " +  interestPoints);
-				for(Object key : interestPoints.getKeys()){
+				else {
 					imagePointsList.add((ImageInterestPoints)interestPoints.get(key).getObjectValue());
 				}
-			}			
+			}
+//				logger.debug("Create ImageInterestPoints for "+files.size()+" images has taken: " + (System.currentTimeMillis() - now) / 1000  + " secs");					
 		} catch (Exception exception) {
 			logger.error("init error",exception);
 		} finally {
