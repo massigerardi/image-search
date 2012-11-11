@@ -47,6 +47,11 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 		init();
 	}
 
+	@Override
+	public String toString() {
+		return "NaiveColorImageSearcher{ reference:"+reference+", zones:"+zones+", zoneSize:"+zoneSize+" }";
+	}
+
 	private void init() {
 		baseSize = zoneSize * zones;
 		fraction = zones * 2;

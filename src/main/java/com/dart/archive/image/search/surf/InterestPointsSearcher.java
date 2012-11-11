@@ -90,6 +90,11 @@ public class InterestPointsSearcher extends AImageSearcher {
 		init();
 	}
 
+	@Override
+	public String toString() {
+		return "InterestPointsSearcher{ sources:"+sources+" }";
+	}
+
 	private void init() {
 		long now = System.currentTimeMillis();
 		Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
