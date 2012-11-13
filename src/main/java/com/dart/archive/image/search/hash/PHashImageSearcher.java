@@ -32,6 +32,11 @@ public class PHashImageSearcher extends AImageSearcher implements ImageSearcher 
 		init();
 	}
 
+	@Override
+	public String toString() {
+		return "PHashImageSearcher{ folderName:"+folderName+" }";
+	}
+
 	private void init() {
 		images = new  ArrayList<ImageHash>();
 		File folder = new File(folderName);

@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 
@@ -21,7 +22,6 @@ import org.junit.Before;
  */
 public abstract class ImageSearcherTest {
 
-	protected String imagesRootFolder;
 	protected String imagesFolder;
 	protected String testFolder;
 	
@@ -39,12 +39,12 @@ public abstract class ImageSearcherTest {
 	public void setUp() throws Exception {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream("src/test/resources/test.properties"));
-		imagesRootFolder = properties.getProperty("imagesRoot");
 		imagesFolder = properties.getProperty("images");
 		testFolder   = properties.getProperty("search");
 	}
 
 	protected void compare() throws IOException {
+		System.out.println("comparing with "+searcher.toString());
 		File testImages = new File(testFolder);
 		Collection<File> images = FileUtils.listFiles(testImages, new String[] {"jpg", "JPG"}, true);
 		for (File image : images) {
@@ -87,9 +87,9 @@ public abstract class ImageSearcherTest {
 
 
 	private boolean checkName(String image, String candidate) {
-		String imageName = StringUtils.remove(StringUtils.remove(image.toLowerCase(), ".jpg"),".jpeg");
-		String candifateName = StringUtils.remove(StringUtils.remove(candidate.toLowerCase(), ".jpg"),".jpeg");
-		return imageName.startsWith(candifateName);
+		String imageName = FilenameUtils.getBaseName(image);
+		String candidateName = FilenameUtils.getBaseName(candidate);
+		return imageName.startsWith(candidateName);
 	}
 
 }

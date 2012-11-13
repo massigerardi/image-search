@@ -23,9 +23,7 @@ public class PHashImageSearcherTest extends ImageSearcherTest {
 	 */
 	@Test
 	public void testCompare() throws IOException {
-		long start = System.currentTimeMillis();
-		setSearcher(new PHashImageSearcher(new File(imagesRootFolder, imagesFolder).getAbsolutePath()));
-		System.out.println("loaded images in "+(System.currentTimeMillis()-start)+"ms");
+		setSearcher(new PHashImageSearcher(new File(imagesFolder).getAbsolutePath()));
 		compare();
 	}
 

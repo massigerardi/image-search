@@ -15,7 +15,7 @@ import com.dart.archive.image.search.surf.InterestPointsSearcher;
  *
  */
 public class InterestPointsSearcherTest extends ImageSearcherTest{
-
+	
 	@Test
 	public void testCompare() throws IOException {
 		setSearcher(new InterestPointsSearcher(imagesFolder));

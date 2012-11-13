@@ -96,6 +96,11 @@ public class InterestPointsSearcher extends AImageSearcher {
 		init();
 	}
 
+	@Override
+	public String toString() {
+		return "InterestPointsSearcher{ sources:"+sources+" }";
+	}
+
 	private void init() {
 		System.setProperty("net.sf.ehcache.enableShutdownHook","true");
 		try {
@@ -103,7 +108,6 @@ public class InterestPointsSearcher extends AImageSearcher {
 			for (File file : files) {
 				addImageInterestPoints(file);
 			}
-			interestPoints.flush();
 		} finally {
 			CacheManager.getInstance().shutdown();			
 		}
@@ -118,6 +122,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 			List<InterestPoint> points = findInterestPoints(file);
 			imageInterestPoints = new ImageInterestPoints(file, points);			
 			interestPoints.put(new Element(file.getName(), imageInterestPoints));
+			interestPoints.flush();
 		}
 		imagePointsList.add(imageInterestPoints);
 	}
