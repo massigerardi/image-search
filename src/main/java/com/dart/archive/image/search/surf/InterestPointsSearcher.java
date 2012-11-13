@@ -99,30 +99,29 @@ public class InterestPointsSearcher extends AImageSearcher {
 	private void init() {
 		System.setProperty("net.sf.ehcache.enableShutdownHook","true");
 		try {
-			if (interestPoints.getDiskStoreSize() <= 0 ) {
-				logger.debug("interestPoints empty cache: " +  interestPoints);
-				Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
-				for (File file : files) {
-					List<InterestPoint> points = findInterestPoints(file);
-					ImageInterestPoints imageInterestPoints = new ImageInterestPoints(file, points);
-					imagePointsList.add(imageInterestPoints);
-					interestPoints.put(new Element(file.getName(), imageInterestPoints));
-				}
-				interestPoints.flush();
-//				logger.debug("Create ImageInterestPoints for "+files.size()+" images has taken: " + (System.currentTimeMillis() - now) / 1000  + " secs");					
+			Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
+			for (File file : files) {
+				addImageInterestPoints(file);
 			}
-			else {
-				logger.debug("interestPoints full cache: " +  interestPoints);
-				for(Object key : interestPoints.getKeys()){
-					imagePointsList.add((ImageInterestPoints)interestPoints.get(key).getObjectValue());
-				}
-			}			
-		} catch (Exception exception) {
-			logger.error("init error",exception);
+			interestPoints.flush();
 		} finally {
 			CacheManager.getInstance().shutdown();			
 		}
 	}
+	private void addImageInterestPoints(File file) {
+		
+		ImageInterestPoints imageInterestPoints = null;
+		Element element = interestPoints.get(file.getName());
+		if(element != null) {
+			imageInterestPoints = (ImageInterestPoints)element.getObjectValue();
+		} else {
+			List<InterestPoint> points = findInterestPoints(file);
+			imageInterestPoints = new ImageInterestPoints(file, points);			
+			interestPoints.put(new Element(file.getName(), imageInterestPoints));
+		}
+		imagePointsList.add(imageInterestPoints);
+	}
+	
 
 	private List<InterestPoint> findInterestPoints(File file) {
 		ImagePlus image = opener.openImage(file.getAbsolutePath());
