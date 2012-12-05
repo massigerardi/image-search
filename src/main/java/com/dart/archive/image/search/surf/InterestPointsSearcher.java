@@ -63,7 +63,10 @@ public class InterestPointsSearcher extends AImageSearcher {
 //				InterestPointsUtils.displayInterestingPoints(matchedPoints, file, points, imagePoints.getImage(), imagePoints.getPoints());
 			double distance = ((double)matchedPoints.size()/(double)points.size());
 			double result = (double)Math.round(distance * 100) / 100;
-			if (result>0) {		
+			if (result>0) {
+				if(logger.isDebugEnabled()) {
+					logger.debug("candidate: " + imagePoints.getImage().getName() + " result: " + result);					
+				}
 				candidates.add(new ImageSurfCandidate(imagePoints.getImage(), result, matchedPoints.size()));
 			}
 		}
@@ -83,6 +86,9 @@ public class InterestPointsSearcher extends AImageSearcher {
 				headScore = candidate.getScore();
 			}
 			double difference = candidate.getScore()/headScore;
+			if(logger.isDebugEnabled()) {
+				logger.debug("candidate " + candidate.getImage().getName() +" difference: " + difference + " lesser than " +  threshold + " threshold: " + (difference < threshold));
+			}
 			if ((difference)<threshold) {
 				candidates.remove(candidate);
 			}
