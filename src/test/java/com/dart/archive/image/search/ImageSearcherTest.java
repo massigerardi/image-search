@@ -23,6 +23,7 @@ import org.junit.Before;
 public abstract class ImageSearcherTest {
 
 	protected String imagesFolder;
+	
 	protected String testFolder;
 	
 	ImageSearcher searcher;
@@ -39,40 +40,38 @@ public abstract class ImageSearcherTest {
 	public void setUp() throws Exception {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream("src/test/resources/test.properties"));
-		imagesFolder = properties.getProperty("images");
-		testFolder   = properties.getProperty("search");
+		imagesFolder = System.getProperty("images");
+		if (StringUtils.isEmpty(imagesFolder)) {
+			imagesFolder = properties.getProperty("images");
+		}
+		testFolder = System.getProperty("search-images");
+		if (StringUtils.isEmpty(testFolder)) {
+			testFolder = properties.getProperty("search");
+		}
 	}
 
-	protected void compare() throws IOException {
+	protected void compare(double treshold) throws IOException {
 		System.out.println("comparing with "+searcher.toString());
 		File testImages = new File(testFolder);
 		Collection<File> images = FileUtils.listFiles(testImages, new String[] {"jpg", "JPG"}, true);
 		for (File image : images) {
-			compare(image);
+			compare(image, treshold);
 		}
 		System.out.println();
 	}
 	
-	protected void compare(File file) throws IOException {
+	protected void compare(File file, double treshold) throws IOException {
 		long start = System.currentTimeMillis();
 		Collection<Candidate> candidates = searcher.search(file);
 		float end = (System.currentTimeMillis()-start);
 		int counter = 1;
-		int index = -1;
-		boolean hasHits = false;
 		String time = "["+end+"ms]";
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(StringUtils.rightPad(time, 11));
 		buffer.append(StringUtils.rightPad(file.getName(), 40));
 		buffer.append(":");
 		for (Candidate candidate : candidates) {
-			if (!hasHits) {
-				hasHits = checkName(file.getName(), candidate.getImage().getName());
-				if (hasHits) {
-					index = counter;
-				}
-				hasHits = hasHits && index < 6;
-			}
+			assertFalse("", candidate.getScore()<treshold);
 			if (counter<6) {
 				buffer.append(candidate);
 				buffer.append(", ");
@@ -80,9 +79,7 @@ public abstract class ImageSearcherTest {
 			counter++;
 		}
 		buffer.append("... ");
-		buffer.insert(0, StringUtils.rightPad(String.valueOf(index), 5));
 		System.out.println(buffer);
-		assertFalse(candidates.isEmpty());
 	}
 
 

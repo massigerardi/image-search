@@ -24,7 +24,7 @@ public class PHashImageSearcherTest extends ImageSearcherTest {
 	@Test
 	public void testCompare() throws IOException {
 		setSearcher(new PHashImageSearcher(new File(imagesFolder).getAbsolutePath()));
-		compare();
+		compare(0);
 	}
 
 }

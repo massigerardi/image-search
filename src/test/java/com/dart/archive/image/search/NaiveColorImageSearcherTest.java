@@ -26,7 +26,7 @@ public class NaiveColorImageSearcherTest extends ImageSearcherTest {
 	@Test
 	public void testCompare() throws IOException {
 		setSearcher(new NaiveColorImageSearcher(imagesFolder, 5, 60));
-		compare();
+		compare(0);
 	}
 
 }

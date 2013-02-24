@@ -62,7 +62,7 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 		Collection<File> images = FileUtils.listFiles(testImages, new String[] {"jpg"}, true);
 		for (File image : images) {
 			Collection<Candidate> candidates = service.search(image);
-			assertFalse(candidates.isEmpty());
+			assertFalse("image "+image.getName(), candidates.isEmpty());
 		}
 	}
 	

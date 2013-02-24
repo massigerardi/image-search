@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
+import com.dart.archive.image.search.CandidateImpl;
 import com.dart.archive.image.search.surf.ip.InterestPoint;
 import com.dart.archive.image.search.surf.ip.Matcher;
 
@@ -53,25 +54,35 @@ public class InterestPointsSearcher extends AImageSearcher {
 	Opener opener = new Opener();
 	
 	protected void search(Collection<Candidate> candidates, File file) {
-		logger.debug("searching...");
+		logger.debug("searching..." + file.getName());
 		List<InterestPoint> points = findInterestPoints(file);
 		for (ImageInterestPoints imagePoints : imagePointsList) {
-			List<InterestPoint> currentPoints = imagePoints.getPoints();
-			Map<InterestPoint, InterestPoint> matchedPointsDirect = Matcher.findMathes(points, currentPoints);
-			Map<InterestPoint, InterestPoint> matchedPointsReverse = Matcher.findMathes(currentPoints, points);
-			Map<InterestPoint, InterestPoint> matchedPoints = intersection(matchedPointsDirect, matchedPointsReverse);
-//				InterestPointsUtils.displayInterestingPoints(matchedPoints, file, points, imagePoints.getImage(), imagePoints.getPoints());
-			double distance = ((double)matchedPoints.size()/(double)points.size());
-			double result = (double)Math.round(distance * 100) / 100;
-			if (result>0) {
+			double distance = calculateDistance(points, imagePoints.getPoints());
+			if (distance>0.1d) {
 				if(logger.isDebugEnabled()) {
-					logger.debug("candidate: " + imagePoints.getImage().getName() + " result: " + result);					
+					logger.debug("candidate: " + imagePoints.getImage().getName() + " result: " + distance);					
 				}
-				candidates.add(new ImageSurfCandidate(imagePoints.getImage(), result, matchedPoints.size()));
+				candidates.add(new CandidateImpl(distance, imagePoints.getImage()));
+				if (distance>0.60d) {
+					break;
+					
+				}
+				
 			}
 		}
-		filter(candidates);
+		if (candidates.size()>1) {
+			filter(candidates);
+		}
 		
+	}
+
+	private double calculateDistance(List<InterestPoint> points, List<InterestPoint> currentPoints) {
+		Map<InterestPoint, InterestPoint> matchedPointsDirect = Matcher.findMathes(points, currentPoints);
+		Map<InterestPoint, InterestPoint> matchedPointsReverse = Matcher.findMathes(currentPoints, points);
+		Map<InterestPoint, InterestPoint> matchedPoints = intersection(matchedPointsDirect, matchedPointsReverse);
+//			InterestPointsUtils.displayInterestingPoints(matchedPoints, file, points, imagePoints.getImage(), imagePoints.getPoints());
+		double distance = ((double)matchedPoints.size()/(double)points.size());
+		return (double)Math.round(distance * 100) / 100;
 	}
 
 	double threshold = 0.25d;
@@ -79,17 +90,21 @@ public class InterestPointsSearcher extends AImageSearcher {
 	public void setThreshold(double threshold) {this.threshold = threshold;}
 
 	private void filter(Collection<Candidate> candidates) {
+		if(logger.isDebugEnabled()) {
+			logger.debug("filtering "+candidates);
+		}
 		Collection<Candidate> tempCandidates = new TreeSet<Candidate>(candidates);
 		Double headScore = null;
 		for (Candidate candidate : tempCandidates) {
 			if (headScore==null) {
 				headScore = candidate.getScore();
 			}
-			double difference = candidate.getScore()/headScore;
+			double ratio = candidate.getScore()/headScore;
+			boolean canBeRemoved = ratio<threshold; 
 			if(logger.isDebugEnabled()) {
-				logger.debug("candidate " + candidate.getImage().getName() +" difference: " + difference + " lesser than " +  threshold + " threshold: " + (difference < threshold));
+				logger.debug("candidate " + candidate.getImage().getName() +" difference: " + ratio + " lesser than " +  threshold + " threshold: " + canBeRemoved);
 			}
-			if ((difference)<threshold) {
+			if (canBeRemoved) {
 				candidates.remove(candidate);
 			}
 		}

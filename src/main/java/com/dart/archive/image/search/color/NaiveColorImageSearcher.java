@@ -154,7 +154,6 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	@Override
 	protected void search(Collection<Candidate> candidates, File file) {
 		try {
-			BufferedImage image = ImageIO.read(file);
 			// Put the reference, scaled, in the left part of the UI.
 			BufferedImage ref = ImageUtils.resize(300, 300, file.getAbsolutePath());
 			// Calculate the signature vector for the reference.
