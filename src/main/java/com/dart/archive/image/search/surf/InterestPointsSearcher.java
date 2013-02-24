@@ -10,10 +10,8 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -55,32 +53,30 @@ public class InterestPointsSearcher extends AImageSearcher {
 	
 	protected void search(Collection<Candidate> candidates, File file) {
 		logger.debug("searching..." + file.getName());
+		long start = System.currentTimeMillis();
 		List<InterestPoint> points = findInterestPoints(file);
-		for (ImageInterestPoints imagePoints : imagePointsList) {
-			double distance = calculateDistance(points, imagePoints.getPoints());
-			if (distance>0.1d) {
-				if(logger.isDebugEnabled()) {
-					logger.debug("candidate: " + imagePoints.getImage().getName() + " result: " + distance);					
+		try {
+			for (ImageInterestPoints imagePoints : imagePointsList) {
+				double distance = calculateDistance(points, imagePoints.getPoints());
+				if (distance>0.1d) {
+					if(logger.isDebugEnabled()) {
+						logger.debug("candidate: " + imagePoints.getImage().getName() + " result: " + distance);					
+					}
+					candidates.add(new CandidateImpl(distance, imagePoints.getImage()));
+					if (distance>0.60d) {
+						break;
+					}
 				}
-				candidates.add(new CandidateImpl(distance, imagePoints.getImage()));
-				if (distance>0.60d) {
-					break;
-					
-				}
-				
 			}
-		}
-		if (candidates.size()>1) {
-			filter(candidates);
+		} finally {
+			long end = System.currentTimeMillis();
+			logger.debug("search in "+imagePointsList.size()+" images took "+(end -  start)+" ms");
 		}
 		
 	}
 
 	private double calculateDistance(List<InterestPoint> points, List<InterestPoint> currentPoints) {
-		Map<InterestPoint, InterestPoint> matchedPointsDirect = Matcher.findMathes(points, currentPoints);
-		Map<InterestPoint, InterestPoint> matchedPointsReverse = Matcher.findMathes(currentPoints, points);
-		Map<InterestPoint, InterestPoint> matchedPoints = intersection(matchedPointsDirect, matchedPointsReverse);
-//			InterestPointsUtils.displayInterestingPoints(matchedPoints, file, points, imagePoints.getImage(), imagePoints.getPoints());
+		Map<InterestPoint, InterestPoint> matchedPoints = Matcher.findMathes(points, currentPoints, false);
 		double distance = ((double)matchedPoints.size()/(double)points.size());
 		return (double)Math.round(distance * 100) / 100;
 	}
@@ -88,27 +84,6 @@ public class InterestPointsSearcher extends AImageSearcher {
 	double threshold = 0.25d;
 	public double getThreshold() {return threshold;}
 	public void setThreshold(double threshold) {this.threshold = threshold;}
-
-	private void filter(Collection<Candidate> candidates) {
-		if(logger.isDebugEnabled()) {
-			logger.debug("filtering "+candidates);
-		}
-		Collection<Candidate> tempCandidates = new TreeSet<Candidate>(candidates);
-		Double headScore = null;
-		for (Candidate candidate : tempCandidates) {
-			if (headScore==null) {
-				headScore = candidate.getScore();
-			}
-			double ratio = candidate.getScore()/headScore;
-			boolean canBeRemoved = ratio<threshold; 
-			if(logger.isDebugEnabled()) {
-				logger.debug("candidate " + candidate.getImage().getName() +" difference: " + ratio + " lesser than " +  threshold + " threshold: " + canBeRemoved);
-			}
-			if (canBeRemoved) {
-				candidates.remove(candidate);
-			}
-		}
-	}
 
 	String sources;
 	
@@ -150,19 +125,15 @@ public class InterestPointsSearcher extends AImageSearcher {
 	
 
 	private List<InterestPoint> findInterestPoints(File file) {
-		ImagePlus image = opener.openImage(file.getAbsolutePath());
-		return finder.findInterestingPoints(image.getProcessor());
-	}
-
-	private Map<InterestPoint, InterestPoint> intersection(Map<InterestPoint, InterestPoint> map1, Map<InterestPoint, InterestPoint> map2) {
-		// take only those points that matched in the reverse comparison too
-		Map<InterestPoint, InterestPoint> result = new HashMap<InterestPoint, InterestPoint>();
-		for (InterestPoint ipt1 : map1.keySet()) {
-			InterestPoint ipt2 = map1.get(ipt1);
-			if (ipt1 == map2.get(ipt2))
-				result.put(ipt1, ipt2);
+		logger.debug("findInterestPoints start ...");
+		long start = System.currentTimeMillis();
+		try {
+			ImagePlus image = opener.openImage(file.getAbsolutePath());
+			return finder.findInterestingPoints(image.getProcessor());
+		} finally {
+			long end = System.currentTimeMillis();
+			logger.debug("findInterestPoints took "+(end -  start)+" ms");
 		}
-		return result;
 	}
 	
 }
