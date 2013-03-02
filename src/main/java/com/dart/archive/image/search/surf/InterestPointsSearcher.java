@@ -111,18 +111,22 @@ public class InterestPointsSearcher extends AImageSearcher {
 	private void addImageInterestPoints(File file) {
 		
 		ImageInterestPoints imageInterestPoints = null;
-		Element element = interestPoints.get(file.getName());
+		String key = getKey(file);
+		Element element = interestPoints.get(key);
 		if(element != null) {
 			imageInterestPoints = (ImageInterestPoints)element.getObjectValue();
 		} else {
 			List<InterestPoint> points = findInterestPoints(file);
 			imageInterestPoints = new ImageInterestPoints(file, points);			
-			interestPoints.put(new Element(file.getName(), imageInterestPoints));
+			interestPoints.put(new Element(key, imageInterestPoints));
 			interestPoints.flush();
 		}
 		imagePointsList.add(imageInterestPoints);
 	}
 	
+	private String getKey(File file) {
+		return file.getAbsolutePath();
+	}
 
 	private List<InterestPoint> findInterestPoints(File file) {
 		logger.debug("findInterestPoints start ...");
