@@ -6,7 +6,6 @@ package com.dart.archive.image.search.surf;
 import ij.ImagePlus;
 import ij.io.Opener;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -14,8 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
+import java.util.UUID;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -60,7 +58,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 	protected void search(Collection<Candidate> candidates, File file) {
 		debug("searching..." + file.getName());
 		long start = System.currentTimeMillis();
-		List<InterestPoint> points = findInterestPoints(file);
+		List<InterestPoint> points = resizeAndFindInterestPoints(file);
 		try {
 			for (ImageInterestPoints imagePoints : imagePointsList) {
 				double distance = calculateDistance(points, imagePoints.getPoints());
@@ -124,13 +122,12 @@ public class InterestPointsSearcher extends AImageSearcher {
 		String key = getKey(file);
 		Element element = interestPoints.get(key);
 		if(element != null) {
-			debug("element "+ key +"was found in cache");
+			debug("element "+ key +" was found in cache");
 			imageInterestPoints = (ImageInterestPoints)element.getObjectValue();
 		} else {
 			debug("element "+ key +" was NOT found in cache");
-			List<InterestPoint> points = findInterestPoints(file);
+			List<InterestPoint> points = resizeAndFindInterestPoints(file);
 			imageInterestPoints = new ImageInterestPoints(file, points);			
-			debug("element "+ key +" was cached");
 			interestPoints.put(new Element(key, imageInterestPoints));
 			interestPoints.flush();
 		}
@@ -141,18 +138,30 @@ public class InterestPointsSearcher extends AImageSearcher {
 		return file.getAbsolutePath();
 	}
 
-	private List<InterestPoint> findInterestPoints(File file) {
-		debug("findInterestPoints start ... "+file.getName());
-		long start = System.currentTimeMillis();
-		File dest = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName())+"-tmp."+FilenameUtils.getExtension(file.getName()));
+	private List<InterestPoint> resizeAndFindInterestPoints(File file) {
+		File dest = new File(file.getParentFile(), UUID.randomUUID()+"."+FilenameUtils.getExtension(file.getName()));
 		try {
 			ImageUtils.resizeAndSave(600, file.getAbsolutePath(), dest.getAbsolutePath());
 		} catch (IOException e) {
 			logger.error("resizing", e);
-			dest = file;
+			return findInterestPoints(file);
 		}
 		try {
-			ImagePlus image = opener.openImage(dest.getAbsolutePath());
+			return findInterestPoints(dest);
+		} finally {
+			try {
+				FileUtils.forceDelete(dest);
+			} catch (IOException e) {
+				logger.error("deleting "+dest, e);
+			}
+		}
+	}
+
+	private List<InterestPoint> findInterestPoints(File file) {
+		debug("findInterestPoints start ... "+file.getName());
+		long start = System.currentTimeMillis();
+		try {
+			ImagePlus image = opener.openImage(file.getAbsolutePath());
 			return finder.findInterestingPoints(image.getProcessor());
 		} finally {
 			long end = System.currentTimeMillis();
