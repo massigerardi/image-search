@@ -6,18 +6,23 @@ package com.dart.archive.image.search.surf;
 import ij.ImagePlus;
 import ij.io.Opener;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import com.dart.archive.image.search.AImageSearcher;
@@ -25,6 +30,7 @@ import com.dart.archive.image.search.Candidate;
 import com.dart.archive.image.search.CandidateImpl;
 import com.dart.archive.image.search.surf.ip.InterestPoint;
 import com.dart.archive.image.search.surf.ip.Matcher;
+import com.dart.archive.image.utils.ImageUtils;
 
 /**
  * @author massi
@@ -118,10 +124,10 @@ public class InterestPointsSearcher extends AImageSearcher {
 		String key = getKey(file);
 		Element element = interestPoints.get(key);
 		if(element != null) {
-			debug("element "+ key +"was cached");
+			debug("element "+ key +"was found in cache");
 			imageInterestPoints = (ImageInterestPoints)element.getObjectValue();
 		} else {
-			debug("element "+ key +" was NOT cached");
+			debug("element "+ key +" was NOT found in cache");
 			List<InterestPoint> points = findInterestPoints(file);
 			imageInterestPoints = new ImageInterestPoints(file, points);			
 			debug("element "+ key +" was cached");
@@ -138,8 +144,15 @@ public class InterestPointsSearcher extends AImageSearcher {
 	private List<InterestPoint> findInterestPoints(File file) {
 		debug("findInterestPoints start ... "+file.getName());
 		long start = System.currentTimeMillis();
+		File dest = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName())+"-tmp."+FilenameUtils.getExtension(file.getName()));
 		try {
-			ImagePlus image = opener.openImage(file.getAbsolutePath());
+			ImageUtils.resizeAndSave(600, file.getAbsolutePath(), dest.getAbsolutePath());
+		} catch (IOException e) {
+			logger.error("resizing", e);
+			dest = file;
+		}
+		try {
+			ImagePlus image = opener.openImage(dest.getAbsolutePath());
 			return finder.findInterestingPoints(image.getProcessor());
 		} finally {
 			long end = System.currentTimeMillis();
