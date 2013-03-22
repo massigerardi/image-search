@@ -52,16 +52,14 @@ public class InterestPointsSearcher extends AImageSearcher {
 	Opener opener = new Opener();
 	
 	protected void search(Collection<Candidate> candidates, File file) {
-		logger.debug("searching..." + file.getName());
+		debug("searching..." + file.getName());
 		long start = System.currentTimeMillis();
 		List<InterestPoint> points = findInterestPoints(file);
 		try {
 			for (ImageInterestPoints imagePoints : imagePointsList) {
 				double distance = calculateDistance(points, imagePoints.getPoints());
 				if (distance>0.1d) {
-					if(logger.isDebugEnabled()) {
-						logger.debug("candidate: " + imagePoints.getImage().getName() + " result: " + distance);					
-					}
+					debug("candidate: " + imagePoints.getImage().getName() + " result: " + distance);					
 					candidates.add(new CandidateImpl(distance, imagePoints.getImage()));
 					if (distance>0.60d) {
 						break;
@@ -70,7 +68,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 			}
 		} finally {
 			long end = System.currentTimeMillis();
-			logger.debug("search in "+imagePointsList.size()+" images took "+(end -  start)+" ms");
+			debug("search in "+imagePointsList.size()+" images took "+(end -  start)+" ms");
 		}
 		
 	}
@@ -96,6 +94,12 @@ public class InterestPointsSearcher extends AImageSearcher {
 	public String toString() {
 		return "InterestPointsSearcher{ sources:"+sources+" }";
 	}
+	
+	private void debug(String message) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(message);
+		}
+	}
 
 	private void init() {
 		System.setProperty("net.sf.ehcache.enableShutdownHook","true");
@@ -114,10 +118,13 @@ public class InterestPointsSearcher extends AImageSearcher {
 		String key = getKey(file);
 		Element element = interestPoints.get(key);
 		if(element != null) {
+			debug("element "+ key +"was cached");
 			imageInterestPoints = (ImageInterestPoints)element.getObjectValue();
 		} else {
+			debug("element "+ key +" was NOT cached");
 			List<InterestPoint> points = findInterestPoints(file);
 			imageInterestPoints = new ImageInterestPoints(file, points);			
+			debug("element "+ key +" was cached");
 			interestPoints.put(new Element(key, imageInterestPoints));
 			interestPoints.flush();
 		}
@@ -129,14 +136,14 @@ public class InterestPointsSearcher extends AImageSearcher {
 	}
 
 	private List<InterestPoint> findInterestPoints(File file) {
-		logger.debug("findInterestPoints start ...");
+		debug("findInterestPoints start ... "+file.getName());
 		long start = System.currentTimeMillis();
 		try {
 			ImagePlus image = opener.openImage(file.getAbsolutePath());
 			return finder.findInterestingPoints(image.getProcessor());
 		} finally {
 			long end = System.currentTimeMillis();
-			logger.debug("findInterestPoints took "+(end -  start)+" ms");
+			debug("findInterestPoints "+file.length()+" took "+(end -  start)+" ms");
 		}
 	}
 	
