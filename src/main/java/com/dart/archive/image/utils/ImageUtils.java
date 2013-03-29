@@ -4,6 +4,7 @@
 package com.dart.archive.image.utils;
 
 import ij.ImagePlus;
+import ij.io.FileInfo;
 import ij.io.Opener;
 
 import java.awt.image.BufferedImage;
@@ -93,7 +94,7 @@ public class ImageUtils {
 	 */
 	public static void resizeFolder(int width, int height, File folder) throws IOException {
 		debug("resizing to "+width+"x"+height+" in folder "+folder.getAbsolutePath());
-		Collection<File> files = FileUtils.listFiles(folder, new String[] {"jpg", "JPG", "jpeg"}, false);
+		Collection<File> files = FileUtils.listFiles(folder, new String[] {"jpg", "JPG", "jpeg", "ppm"}, false);
 		for (File file : files) {
 			resizeAndSave(width, height, file.getAbsolutePath(), createDest(file.getAbsolutePath()));
 		}
@@ -110,7 +111,7 @@ public class ImageUtils {
 	 */
 	public static void resizeFolder(int size, File folder) throws IOException {
 		debug("resizing to "+size+" in folder "+folder.getAbsolutePath());
-		Collection<File> files = FileUtils.listFiles(folder, new String[] {"jpg", "JPG", "jpeg"}, false);
+		Collection<File> files = FileUtils.listFiles(folder, new String[] {"jpg", "JPG", "jpeg", "ppm", "PPM"}, false);
 		for (File file : files) {
 			resizeAndSave(size, file.getAbsolutePath(), createDest(file.getAbsolutePath()));
 		}
@@ -177,7 +178,8 @@ public class ImageUtils {
 		dest = createDest(src, dest);
 		debug("resizing to "+width+"x"+height+" file "+src+" to "+dest);
 		BufferedImage image = resize(width, height, src);
-		ImageIO.write(image, "jpg", new File(dest));
+		String ext = FilenameUtils.getExtension(src);
+		ImageIO.write(image, ext, new File(dest));
 		return image;
 	}
 	
@@ -228,6 +230,5 @@ public class ImageUtils {
 		ImageIO.write(image, "jpg", new File(dest));
 		return image;
 	}
-	
 	
 }

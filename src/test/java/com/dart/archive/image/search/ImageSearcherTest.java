@@ -9,12 +9,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+
+import com.dart.archive.image.utils.ImageHelper;
 
 /**
  * @author massi
@@ -53,7 +54,7 @@ public abstract class ImageSearcherTest {
 	protected void compare(double treshold) throws IOException {
 		System.out.println("comparing with "+searcher.toString());
 		File testImages = new File(testFolder);
-		Collection<File> images = FileUtils.listFiles(testImages, new String[] {"jpg", "JPG"}, true);
+		List<File> images = new ImageHelper().getImages(testImages);
 		for (File image : images) {
 			compare(image, treshold);
 		}
@@ -80,13 +81,6 @@ public abstract class ImageSearcherTest {
 		}
 		buffer.append("... ");
 		System.out.println(buffer);
-	}
-
-
-	private boolean checkName(String image, String candidate) {
-		String imageName = FilenameUtils.getBaseName(image);
-		String candidateName = FilenameUtils.getBaseName(candidate);
-		return imageName.startsWith(candidateName);
 	}
 
 }

@@ -8,20 +8,16 @@ import ij.process.ColorProcessor;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
-import org.apache.commons.io.FileUtils;
-
 import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
 import com.dart.archive.image.search.CandidateImpl;
 import com.dart.archive.image.search.ImageSearcher;
+import com.dart.archive.image.utils.ImageHelper;
 import com.dart.archive.image.utils.ImageUtils;
 
 
@@ -31,6 +27,8 @@ import com.dart.archive.image.utils.ImageUtils;
  */
 public class NaiveColorImageSearcher extends AImageSearcher implements ImageSearcher {
 
+	ImageHelper imageHelper = new ImageHelper();
+	
 	private String reference;
 	private int zones;
 	
@@ -57,7 +55,7 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 		fraction = zones * 2;
 		baseDistance = Math.pow(zones, 2) * Math.sqrt( 3*(Math.pow(255,2)));
 		images = new ArrayList<ImageDescriptor>();
-		Collection<File> files = FileUtils.listFiles(new File(reference), new String[] {"jpg", "jpeg"}, true);
+		List<File> files = imageHelper.getImages(new File(reference));
 		for (File file : files) {
 			BufferedImage current = ImageUtils.resize(300, 300, file.getAbsolutePath());
 			Color[][] signature = calcSignature(current);

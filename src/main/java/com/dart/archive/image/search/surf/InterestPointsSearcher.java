@@ -28,6 +28,7 @@ import com.dart.archive.image.search.Candidate;
 import com.dart.archive.image.search.CandidateImpl;
 import com.dart.archive.image.search.surf.ip.InterestPoint;
 import com.dart.archive.image.search.surf.ip.Matcher;
+import com.dart.archive.image.utils.ImageHelper;
 import com.dart.archive.image.utils.ImageUtils;
 
 /**
@@ -39,6 +40,8 @@ public class InterestPointsSearcher extends AImageSearcher {
 	Logger logger = Logger.getLogger(InterestPointsSearcher.class);
 	
 	DecimalFormat twoDForm = new DecimalFormat("#.##");
+
+	ImageHelper imageHelper = new ImageHelper();
 	
 	List<ImageInterestPoints> imagePointsList = new ArrayList<ImageInterestPoints>();
 	
@@ -108,7 +111,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 	private void init() {
 		System.setProperty("net.sf.ehcache.enableShutdownHook","true");
 		try {
-			Collection<File> files = FileUtils.listFiles(new File(sources), new String[] {"jpg", "jpeg"}, true);
+			List<File> files = imageHelper.getImages(new File(sources));
 			for (File file : files) {
 				addImageInterestPoints(file);
 			}

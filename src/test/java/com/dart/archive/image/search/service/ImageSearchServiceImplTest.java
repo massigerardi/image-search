@@ -15,7 +15,6 @@ import com.dart.archive.image.search.Candidate;
 import com.dart.archive.image.search.ImageSearcher;
 import com.dart.archive.image.search.ImageSearcherTest;
 import com.dart.archive.image.search.color.NaiveColorImageSearcher;
-import com.dart.archive.image.search.hash.PHashImageSearcher;
 import com.dart.archive.image.search.surf.InterestPointsSearcher;
 
 /**
@@ -31,17 +30,6 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	public void testSearchByColor() {
 		ImageSearchService service = new ImageSearchServiceImpl();
 		ImageSearcher searcher = new NaiveColorImageSearcher(imagesFolder);
-		service.setSearcher(searcher);
-		doTest(service);
-	}
-
-	/**
-	 * Test method for {@link com.dart.archive.image.search.service.ImageSearchServiceImpl#search(java.io.File)}.
-	 */
-	@Test
-	public void testSearchByHash() {
-		ImageSearchService service = new ImageSearchServiceImpl();
-		ImageSearcher searcher = new PHashImageSearcher(new File(imagesFolder).getAbsolutePath());
 		service.setSearcher(searcher);
 		doTest(service);
 	}
