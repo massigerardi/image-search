@@ -8,7 +8,6 @@ import ij.io.Opener;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import lombok.ToString;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -43,8 +41,6 @@ public class InterestPointsSearcher extends AImageSearcher {
 
 	private final Logger logger = Logger.getLogger(InterestPointsSearcher.class);
 	
-	private final DecimalFormat twoDForm = new DecimalFormat("#.##");
-
 	private ImageHelper imageHelper = new ImageHelper();
 	
 	private final Set<ImageInterestPoints> imagePointsList = new TreeSet<ImageInterestPoints>();
