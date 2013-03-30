@@ -5,34 +5,21 @@ package com.dart.archive.image.search;
 
 import java.io.File;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
 /**
  * @author massi
  *
  */
+@Getter
+@AllArgsConstructor
+@ToString
 public class CandidateImpl extends ACandidate {
 
-	public CandidateImpl(Double distance, File image) {
-		this.distance = distance;
-		this.image = image;
-	}
-
-	public Double getScore() {
-		return distance;
-	}
-
-	public File getImage() {
-		return image;
-	}
-
-	Double distance;
+	Double score;
 	
 	File image;
-
-	@Override
-	public String toString() {
-		return image.getName()+"["+distance+"]";
-	}
-	
-	
 	
 }

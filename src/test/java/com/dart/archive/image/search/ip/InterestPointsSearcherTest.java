@@ -18,7 +18,9 @@ public class InterestPointsSearcherTest extends ImageSearcherTest{
 	
 	@Test
 	public void testCompare() throws IOException {
-		setSearcher(new InterestPointsSearcher(imagesFolder));
+		InterestPointsSearcher searcher = new InterestPointsSearcher(imagesFolder);
+		searcher.setUseCache(false);
+		setSearcher(searcher);
 		compare(0.1d);
 	}
 	

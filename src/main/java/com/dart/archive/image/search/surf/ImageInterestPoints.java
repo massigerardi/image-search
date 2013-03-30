@@ -7,38 +7,35 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import com.dart.archive.image.search.surf.ip.InterestPoint;
+import com.google.common.collect.ComparisonChain;
 
 /**
  * @author massi
  *
  */
-public class ImageInterestPoints implements Serializable {
+@Getter
+@AllArgsConstructor
+public class ImageInterestPoints implements Serializable, Comparable<ImageInterestPoints> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 835075804493712156L;
 
 	File image;
 	
 	List<InterestPoint> points;
 
-	public ImageInterestPoints(File image, List<InterestPoint> points) {
-		super();
-		this.image = image;
-		this.points = points;
+	@Override
+	public int compareTo(ImageInterestPoints that) {
+		// TODO Auto-generated method stub
+		return ComparisonChain.start()
+				.compare(this.getImage().getAbsolutePath(), that.getImage().getAbsolutePath())
+				.result();
 	}
-
-	/**
-	 * @return the image
-	 */
-	public File getImage() {
-		return image;
-	}
-
-	/**
-	 * @return the points
-	 */
-	public List<InterestPoint> getPoints() {
-		return points;
-	}
-	
-	
 	
 }

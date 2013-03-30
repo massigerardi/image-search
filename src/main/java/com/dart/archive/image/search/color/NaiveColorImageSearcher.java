@@ -21,6 +21,7 @@ import com.dart.archive.image.search.CandidateImpl;
 import com.dart.archive.image.search.ImageSearcher;
 import com.dart.archive.image.utils.ImageHelper;
 import com.dart.archive.image.utils.ImageUtils;
+import com.google.common.base.Objects;
 
 
 /**
@@ -33,17 +34,17 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	
 	ImageHelper imageHelper = new ImageHelper();
 	
-	private String reference;
+	private String sources;
 	private int zones;
 	
-	List<ImageDescriptor> images = new ArrayList<ImageDescriptor>();
+	List<ImageDescriptor> imagesDescriptors = new ArrayList<ImageDescriptor>();
 	
 	public NaiveColorImageSearcher(String imageHome) {
 		this(imageHome, 5, 60);
 	}
 
 	public NaiveColorImageSearcher(String imageHome, int zones, int zoneSize) {
-		this.reference = new File(imageHome).getAbsolutePath();
+		this.sources = new File(imageHome).getAbsolutePath();
 		this.zones = zones;
 		this.zoneSize = zoneSize;
 		init();
@@ -51,7 +52,9 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 
 	@Override
 	public String toString() {
-		return "NaiveColorImageSearcher{ reference:"+reference+", zones:"+zones+", zoneSize:"+zoneSize+" }";
+		return 	Objects.toStringHelper(this.getClass())
+				.add("sources", sources)
+				.add("images", imagesDescriptors.size()).toString();
 	}
 
 	private void debug(String message) {
@@ -65,13 +68,13 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 		baseSize = zoneSize * zones;
 		fraction = zones * 2;
 		baseDistance = Math.pow(zones, 2) * Math.sqrt( 3*(Math.pow(255,2)));
-		images.clear();
-		List<File> files = imageHelper.getImages(new File(reference));
+		imagesDescriptors.clear();
+		List<File> files = imageHelper.getImages(new File(sources));
 		for (File file : files) {
 			BufferedImage current = ImageUtils.resize(300, 300, file.getAbsolutePath());
 			Color[][] signature = calcSignature(current);
 			ImageDescriptor image = new ImageDescriptor(signature, file);
-			images.add(image);
+			imagesDescriptors.add(image);
 		}
 		debug("init done"+this.toString());
 	}
@@ -172,7 +175,7 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 			// number of images in the same directory as the original one.
 			// For each image, calculate its signature and its distance from the
 			// reference signature.
-			for (ImageDescriptor imageDescriptor : images) {
+			for (ImageDescriptor imageDescriptor : imagesDescriptors) {
 				double distance = calcDistance(signature, imageDescriptor.getSignature());
 				DecimalFormat twoDForm = new DecimalFormat("#.##");
 				double result = (double)Math.round(distance * 100) / 100;

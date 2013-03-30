@@ -40,7 +40,8 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	@Test
 	public void testSearchByInterestingPoints() {
 		ImageSearchService service = new ImageSearchServiceImpl();
-		ImageSearcher searcher = new InterestPointsSearcher(imagesFolder);
+		InterestPointsSearcher searcher = new InterestPointsSearcher(imagesFolder);
+		searcher.setUseCache(false);
 		service.setSearcher(searcher);
 		doTest(service);
 	}

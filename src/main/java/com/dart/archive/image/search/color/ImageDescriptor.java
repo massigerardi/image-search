@@ -6,29 +6,18 @@ package com.dart.archive.image.search.color;
 import java.awt.Color;
 import java.io.File;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * @author massi
  *
  */
+@Getter
+@AllArgsConstructor
 public class ImageDescriptor {
 	
 	Color[][] signature;
 	
 	File image;
-	
-	public ImageDescriptor(Color[][] signature, File image) {
-		this.signature = signature;
-		this.image = image;
-	}
-
-	public Color[][] getSignature() {
-		return signature;
-	}
-
-	public File getImage() {
-		return image;
-	}
-	
-	
-
 }

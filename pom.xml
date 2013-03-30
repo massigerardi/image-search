@@ -17,6 +17,11 @@
 	</properties>
 
 	<dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>0.11.6</version>
+        </dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -70,11 +75,16 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-	        <groupId>net.sf.ehcache</groupId>
-	        <artifactId>ehcache-core</artifactId>
-	        <version>${ehcache-version}</version>
-	    </dependency>
-		
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<version>${ehcache-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>14.0.1</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
