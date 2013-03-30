@@ -21,6 +21,7 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.log4j.Logger;
 
 import com.dart.archive.image.search.AImageSearcher;
@@ -45,7 +46,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 	
 	List<ImageInterestPoints> imagePointsList = new ArrayList<ImageInterestPoints>();
 	
-	private Cache interestPoints = CacheManager.getInstance().getCache("interestPoints");
+	private Cache interestPoints;
 	
 	/**
 	 * @return the imagePointsList
@@ -108,7 +109,9 @@ public class InterestPointsSearcher extends AImageSearcher {
 		}
 	}
 
-	private void init() {
+	protected void init() {
+		debug("init "+this.toString());
+		interestPoints = CacheManager.getInstance().getCache("interestPoints");
 		System.setProperty("net.sf.ehcache.enableShutdownHook","true");
 		try {
 			List<File> files = imageHelper.getImages(new File(sources));
@@ -118,9 +121,9 @@ public class InterestPointsSearcher extends AImageSearcher {
 		} finally {
 			CacheManager.getInstance().shutdown();			
 		}
+		debug("init done "+this.toString());
 	}
 	private void addImageInterestPoints(File file) {
-		
 		ImageInterestPoints imageInterestPoints = null;
 		String key = getKey(file);
 		Element element = interestPoints.get(key);
@@ -138,7 +141,11 @@ public class InterestPointsSearcher extends AImageSearcher {
 	}
 	
 	private String getKey(File file) {
-		return file.getAbsolutePath();
+		return String.valueOf(new HashCodeBuilder()
+			.append(file.getParent())
+			.append(file.getName())
+			.append(file.length())
+			.toHashCode());
 	}
 
 	private List<InterestPoint> resizeAndFindInterestPoints(File file) {
@@ -171,5 +178,5 @@ public class InterestPointsSearcher extends AImageSearcher {
 			debug("findInterestPoints "+file.length()+" took "+(end -  start)+" ms");
 		}
 	}
-	
+
 }

@@ -13,4 +13,6 @@ import java.util.Collection;
 public interface ImageSearcher {
 
 	Collection<Candidate> search(File image);
+	
+	void reload();
 }

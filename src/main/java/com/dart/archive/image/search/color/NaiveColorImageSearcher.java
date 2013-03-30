@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
 import com.dart.archive.image.search.CandidateImpl;
@@ -27,12 +29,14 @@ import com.dart.archive.image.utils.ImageUtils;
  */
 public class NaiveColorImageSearcher extends AImageSearcher implements ImageSearcher {
 
+	Logger logger = Logger.getLogger(NaiveColorImageSearcher.class);
+	
 	ImageHelper imageHelper = new ImageHelper();
 	
 	private String reference;
 	private int zones;
 	
-	List<ImageDescriptor> images;
+	List<ImageDescriptor> images = new ArrayList<ImageDescriptor>();
 	
 	public NaiveColorImageSearcher(String imageHome) {
 		this(imageHome, 5, 60);
@@ -50,11 +54,18 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 		return "NaiveColorImageSearcher{ reference:"+reference+", zones:"+zones+", zoneSize:"+zoneSize+" }";
 	}
 
-	private void init() {
+	private void debug(String message) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(message);
+		}
+	}
+
+	protected void init() {
+		debug("init "+this.toString());
 		baseSize = zoneSize * zones;
 		fraction = zones * 2;
 		baseDistance = Math.pow(zones, 2) * Math.sqrt( 3*(Math.pow(255,2)));
-		images = new ArrayList<ImageDescriptor>();
+		images.clear();
 		List<File> files = imageHelper.getImages(new File(reference));
 		for (File file : files) {
 			BufferedImage current = ImageUtils.resize(300, 300, file.getAbsolutePath());
@@ -62,6 +73,7 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 			ImageDescriptor image = new ImageDescriptor(signature, file);
 			images.add(image);
 		}
+		debug("init done"+this.toString());
 	}
 
 	// The reference image "signature" (25 representative pixels, each in
