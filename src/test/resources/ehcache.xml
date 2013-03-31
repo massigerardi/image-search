@@ -2,7 +2,7 @@
 	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
 	updateCheck="false">
 
-	<diskStore path="user.home" />
+	<diskStore path="target/ehcache" />
 
 <defaultCache maxElementsInMemory="10000" eternal="false"
 		timeToIdleSeconds="1200" timeToLiveSeconds="1200" overflowToDisk="true"

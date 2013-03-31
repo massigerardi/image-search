@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.Collection;
 
 import com.dart.archive.image.search.Candidate;
-import com.dart.archive.image.search.ImageSearcher;
 
 /**
  * @author massi
@@ -22,5 +21,4 @@ public interface ImageSearchService {
 	 */
 	Collection<Candidate> search(File image);
 	
-	void setSearcher(ImageSearcher searcher);
 }

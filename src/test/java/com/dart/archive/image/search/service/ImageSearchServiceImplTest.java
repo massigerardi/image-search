@@ -8,11 +8,10 @@ import static org.junit.Assert.assertFalse;
 import java.io.File;
 import java.util.Collection;
 
-import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.dart.archive.image.search.Candidate;
-import com.dart.archive.image.search.ImageSearcher;
 import com.dart.archive.image.search.ImageSearcherTest;
 import com.dart.archive.image.search.color.NaiveColorImageSearcher;
 import com.dart.archive.image.search.surf.InterestPointsSearcher;
@@ -23,36 +22,51 @@ import com.dart.archive.image.search.surf.InterestPointsSearcher;
  */
 public class ImageSearchServiceImplTest extends ImageSearcherTest {
 
+	PreFilteringImageSearchServiceImpl filteringSearchService;
+	SequenceImageSearchService sequenceSearchService;
+	InterestPointsSearcher pointsSearcher;
+	NaiveColorImageSearcher colorImageSearcher;
+	
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+		pointsSearcher = new InterestPointsSearcher(imagesFolder);
+		colorImageSearcher = new NaiveColorImageSearcher(imagesFolder);
+		filteringSearchService = new PreFilteringImageSearchServiceImpl(pointsSearcher, colorImageSearcher);
+		sequenceSearchService = new SequenceImageSearchService(pointsSearcher, colorImageSearcher);
+	}
+	
+	
 	/**
 	 * Test method for {@link com.dart.archive.image.search.service.ImageSearchServiceImpl#search(java.io.File)}.
 	 */
 	@Test
-	public void testSearchByColor() {
-		ImageSearchService service = new ImageSearchServiceImpl();
-		ImageSearcher searcher = new NaiveColorImageSearcher(imagesFolder);
-		service.setSearcher(searcher);
-		doTest(service);
+	public void testFilteringSearch() {
+		testSearch(filteringSearchService);
 	}
-
+	
 	/**
 	 * Test method for {@link com.dart.archive.image.search.service.ImageSearchServiceImpl#search(java.io.File)}.
 	 */
 	@Test
-	public void testSearchByInterestingPoints() {
-		ImageSearchService service = new ImageSearchServiceImpl();
-		InterestPointsSearcher searcher = new InterestPointsSearcher(imagesFolder);
-		searcher.setUseCache(false);
-		service.setSearcher(searcher);
-		doTest(service);
+	public void testSequenceSearch() {
+		testSearch(sequenceSearchService);
 	}
 
-	private void doTest(ImageSearchService service) {
-		File testImages = new File(testFolder);
-		Collection<File> images = FileUtils.listFiles(testImages, new String[] {"jpg"}, true);
-		for (File image : images) {
-			Collection<Candidate> candidates = service.search(image);
-			assertFalse("image "+image.getName(), candidates.isEmpty());
-		}
+	private void testSearch(ImageSearchService searchService) {
+		File image = new File(testFolder, "DG4X0099.jpg");
+		testSearch(image, searchService);
+		image = new File(testFolder, "elena-1.jpg");
+		testSearch(image, searchService);
+		image = new File(testFolder, "lim-001-000.ppm");
+		testSearch(image, searchService);
+	}
+
+	private void testSearch(File image,
+			ImageSearchService searchService) {
+		System.out.println("=========== "+image.getName()+" ===========");
+		Collection<Candidate> candidates = searchService.search(image);
+		assertFalse("image "+image.getName(), candidates.isEmpty());
 	}
 	
 }

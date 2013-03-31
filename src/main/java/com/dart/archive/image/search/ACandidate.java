@@ -3,6 +3,8 @@
  */
 package com.dart.archive.image.search;
 
+import com.google.common.collect.ComparisonChain;
+
 
 /**
  * @author massi
@@ -14,7 +16,7 @@ public abstract class ACandidate implements Candidate {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Candidate other) {
-		return other.getScore().compareTo(getScore());
+		return ComparisonChain.start().compare(this.getScore(), other.getScore()).result();
 	}
 
 

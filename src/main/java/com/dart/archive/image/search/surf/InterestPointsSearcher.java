@@ -11,10 +11,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import lombok.Getter;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -24,9 +25,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.log4j.Logger;
 
-import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
 import com.dart.archive.image.search.CandidateImpl;
+import com.dart.archive.image.search.ImageSearcher;
 import com.dart.archive.image.search.surf.ip.InterestPoint;
 import com.dart.archive.image.search.surf.ip.Matcher;
 import com.dart.archive.image.utils.ImageHelper;
@@ -37,13 +38,14 @@ import com.google.common.base.Objects;
  * @author massi
  *
  */
-public class InterestPointsSearcher extends AImageSearcher {
+@Getter
+public class InterestPointsSearcher implements ImageSearcher {
 
 	private final Logger logger = Logger.getLogger(InterestPointsSearcher.class);
 	
 	private ImageHelper imageHelper = new ImageHelper();
 	
-	private final Set<ImageInterestPoints> imagePointsList = new TreeSet<ImageInterestPoints>();
+	private final Map<String, ImageInterestPoints> imagePoints = new TreeMap<String, ImageInterestPoints>();
 	
 	private Cache interestPoints;
 
@@ -51,9 +53,14 @@ public class InterestPointsSearcher extends AImageSearcher {
 	
 	private final Opener opener = new Opener();
 	
-	private boolean useCache = true;
+	private static boolean useCache = true;
+
+	public Collection<Candidate> search(File file) {
+		return search(file, imagePoints.values());
+	}
 	
-	protected void search(Collection<Candidate> candidates, File file) {
+	public Collection<Candidate> search(File file, Collection<ImageInterestPoints> imagePointsList) {
+		Collection<Candidate> candidates = new TreeSet<Candidate>();
 		debug("searching..." + file.getName());
 		final long start = System.currentTimeMillis();
 		List<InterestPoint> points = resizeAndFindInterestPoints(file);
@@ -72,7 +79,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 			long end = System.currentTimeMillis();
 			debug("search in "+imagePointsList.size()+" images took "+(end -  start)+" ms");
 		}
-		
+		return candidates;
 	}
 
 	private double calculateDistance(final List<InterestPoint> points, final List<InterestPoint> currentPoints) {
@@ -114,7 +121,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 		} else {
 			for (File file : files) {
 				List<InterestPoint> points = resizeAndFindInterestPoints(file);
-				imagePointsList.add(new ImageInterestPoints(file, points));
+				imagePoints.put(file.getAbsolutePath(), new ImageInterestPoints(file, points));
 			}
 		}
 		debug("init done "+this.toString());
@@ -134,7 +141,7 @@ public class InterestPointsSearcher extends AImageSearcher {
 			interestPoints.put(new Element(key, imageInterestPoints));
 			interestPoints.flush();
 		}
-		imagePointsList.add(imageInterestPoints);
+		imagePoints.put(file.getAbsolutePath(), imageInterestPoints);
 	}
 	
 	private String getKey(File file) {
@@ -176,14 +183,19 @@ public class InterestPointsSearcher extends AImageSearcher {
 		}
 	}
 
-	public void setUseCache(boolean useCache) {
-		this.useCache = useCache;
+	public static void setUseCache(boolean b) {
+		useCache = b;
 	}
 
 	@Override
 	public String toString() {
 		return 	Objects.toStringHelper(this.getClass())
 				.add("sources", sources)
-				.add("images", imagePointsList.size()).toString();
+				.add("images", imagePoints.size()).toString();
+	}
+
+	@Override
+	public void reload() {
+		init();
 	}
 }

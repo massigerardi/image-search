@@ -12,10 +12,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
-import com.dart.archive.image.search.AImageSearcher;
 import com.dart.archive.image.search.Candidate;
 import com.dart.archive.image.search.CandidateImpl;
 import com.dart.archive.image.search.ImageSearcher;
@@ -28,7 +28,7 @@ import com.google.common.base.Objects;
  * @author massi
  * 
  */
-public class NaiveColorImageSearcher extends AImageSearcher implements ImageSearcher {
+public class NaiveColorImageSearcher implements ImageSearcher {
 
 	Logger logger = Logger.getLogger(NaiveColorImageSearcher.class);
 	
@@ -165,7 +165,8 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 	}
 
 	@Override
-	protected void search(Collection<Candidate> candidates, File file) {
+	public Collection<Candidate> search(File file) {
+		Collection<Candidate> candidates = new TreeSet<Candidate>();
 		try {
 			// Put the reference, scaled, in the left part of the UI.
 			BufferedImage ref = ImageUtils.resize(300, 300, file.getAbsolutePath());
@@ -185,7 +186,13 @@ public class NaiveColorImageSearcher extends AImageSearcher implements ImageSear
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		return candidates;
 	}
+	
+	@Override
+	public void reload() {
+		init();
+	}
+
 
 }

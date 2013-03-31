@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import com.dart.archive.image.search.surf.ip.InterestPoint;
+import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 
 /**
@@ -37,5 +38,14 @@ public class ImageInterestPoints implements Serializable, Comparable<ImageIntere
 				.compare(this.getImage().getAbsolutePath(), that.getImage().getAbsolutePath())
 				.result();
 	}
+
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(getClass())
+				.add("image", image.getAbsolutePath())
+				.add("points", points.size())
+				.toString();
+	}
+	
 	
 }
