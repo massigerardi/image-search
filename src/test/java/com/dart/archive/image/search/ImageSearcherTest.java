@@ -4,6 +4,7 @@
 package com.dart.archive.image.search;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,13 +72,16 @@ public abstract class ImageSearcherTest {
 		buffer.append(StringUtils.rightPad(time, 11));
 		buffer.append(StringUtils.rightPad(file.getName(), 40));
 		buffer.append(":");
+		double score = 1.0d;
 		for (Candidate candidate : candidates) {
+			assertTrue(candidate.getScore()+">"+score, candidate.getScore()<=score);
 			assertFalse("", candidate.getScore()<treshold);
 			if (counter<6) {
 				buffer.append(candidate);
 				buffer.append(", ");
 			}
 			counter++;
+			score = candidate.getScore();
 		}
 		buffer.append("... ");
 		System.out.println(buffer);

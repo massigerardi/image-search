@@ -16,23 +16,15 @@ import com.dart.archive.image.search.surf.InterestPointsSearcher;
  * @author massimiliano.gerardi
  *
  */
-public class SequenceImageSearchService implements ImageSearchService {
+public class SequenceImageSearchService extends AImageSearchService implements ImageSearchService {
 
 	private final Logger logger = Logger.getLogger(SequenceImageSearchService.class);
-
-	String searchDir;
-	
-	InterestPointsSearcher pointsSearcher;
-	
-	NaiveColorImageSearcher colorSearcher;
 
 	/**
 	 * @param searchDir
 	 */
 	public SequenceImageSearchService(String searchDir) {
-		this.searchDir = searchDir;
-		this.colorSearcher = new NaiveColorImageSearcher(searchDir);
-		this.pointsSearcher = new InterestPointsSearcher(searchDir);
+		super(searchDir);
 	}
 
 	/**
@@ -42,8 +34,7 @@ public class SequenceImageSearchService implements ImageSearchService {
 	public SequenceImageSearchService(
 			InterestPointsSearcher pointsSearcher,
 			NaiveColorImageSearcher colorSearcher) {
-		this.pointsSearcher = pointsSearcher;
-		this.colorSearcher = colorSearcher;
+		super(pointsSearcher, colorSearcher);
 	}
 
 	/* (non-Javadoc)

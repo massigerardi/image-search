@@ -19,23 +19,15 @@ import com.dart.archive.image.search.surf.InterestPointsSearcher;
  * @author massi
  *
  */
-public class PreFilteringImageSearchServiceImpl implements ImageSearchService {
+public class PreFilteringImageSearchServiceImpl extends AImageSearchService implements ImageSearchService {
 
 	private final Logger logger = Logger.getLogger(PreFilteringImageSearchServiceImpl.class);
 
-	String searchDir;
-	
-	InterestPointsSearcher pointsSearcher;
-	
-	NaiveColorImageSearcher colorSearcher;
-	
 	/**
 	 * @param searchDir
 	 */
 	public PreFilteringImageSearchServiceImpl(String searchDir) {
-		this.searchDir = searchDir;
-		this.colorSearcher = new NaiveColorImageSearcher(searchDir);
-		this.pointsSearcher = new InterestPointsSearcher(searchDir);
+		super(searchDir);
 	}
 
 	/**
@@ -45,8 +37,7 @@ public class PreFilteringImageSearchServiceImpl implements ImageSearchService {
 	public PreFilteringImageSearchServiceImpl(
 			InterestPointsSearcher pointsSearcher,
 			NaiveColorImageSearcher colorSearcher) {
-		this.pointsSearcher = pointsSearcher;
-		this.colorSearcher = colorSearcher;
+		super(pointsSearcher, colorSearcher);
 	}
 
 	/* (non-Javadoc)
@@ -85,5 +76,4 @@ public class PreFilteringImageSearchServiceImpl implements ImageSearchService {
 		}
 	}
 
-	
 }

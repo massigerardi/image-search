@@ -16,7 +16,7 @@ public abstract class ACandidate implements Candidate {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Candidate other) {
-		return ComparisonChain.start().compare(this.getScore(), other.getScore()).result();
+		return ComparisonChain.start().compare(other.getScore(), this.getScore()).result();
 	}
 
 

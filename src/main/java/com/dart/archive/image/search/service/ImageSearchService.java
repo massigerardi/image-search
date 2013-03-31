@@ -21,4 +21,6 @@ public interface ImageSearchService {
 	 */
 	Collection<Candidate> search(File image);
 	
+	
+	void reload();
 }
