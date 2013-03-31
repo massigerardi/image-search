@@ -64,7 +64,6 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 
 	private void testSearch(File image,
 			ImageSearchService searchService) {
-		System.out.println("=========== "+image.getName()+" ===========");
 		Collection<Candidate> candidates = searchService.search(image);
 		assertFalse("image "+image.getName(), candidates.isEmpty());
 	}

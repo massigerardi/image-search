@@ -180,8 +180,9 @@ public class NaiveColorImageSearcher implements ImageSearcher {
 				double distance = calcDistance(signature, imageDescriptor.getSignature());
 				DecimalFormat twoDForm = new DecimalFormat("#.##");
 				double result = (double)Math.round(distance * 100) / 100;
-				Candidate candidate = new CandidateImpl(Double.valueOf(twoDForm.format(result)), imageDescriptor.getImage());
-				candidates.add(candidate);
+				if (result>0.49) {
+					candidates.add(new CandidateImpl(Double.valueOf(twoDForm.format(result)), imageDescriptor.getImage()));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

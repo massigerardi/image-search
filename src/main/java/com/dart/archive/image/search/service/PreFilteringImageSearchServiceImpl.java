@@ -50,24 +50,28 @@ public class PreFilteringImageSearchServiceImpl extends AImageSearchService impl
 			if (candidates.isEmpty()) {
 				return candidates;
 			}
-			System.out.println(image.getName()+":"+candidates);
-			Set<ImageInterestPoints> imageInterestPoints = new TreeSet<ImageInterestPoints>();
-			for (Candidate candidate : candidates) {
-				String path = candidate.getImage().getAbsolutePath();
-				if (pointsSearcher.getImagePoints().containsKey(path)) {
-					imageInterestPoints.add(pointsSearcher.getImagePoints().get(path));
-				}
-			}
-			System.out.println(image.getName()+":"+imageInterestPoints);
-			Collection<Candidate> newCandidates = pointsSearcher.search(image, imageInterestPoints);
+			debug(image.getName()+":"+candidates);
+			Collection<Candidate> newCandidates = pointsSearcher.search(image, getSubset(candidates));
 			if (newCandidates.isEmpty()) {
 				return candidates;
 			}
-			System.out.println(image.getName()+":"+newCandidates);
+			debug(image.getName()+":"+newCandidates);
 			return newCandidates;
 		} finally {
 			debug("search for "+image.getName()+" took "+(System.currentTimeMillis()-start)+"ms");
 		}
+	}
+
+	private Collection<ImageInterestPoints> getSubset(
+			Collection<Candidate> candidates) {
+		Set<ImageInterestPoints> imageInterestPoints = new TreeSet<ImageInterestPoints>();
+		for (Candidate candidate : candidates) {
+			String path = candidate.getImage().getAbsolutePath();
+			if (pointsSearcher.getImagePoints().containsKey(path)) {
+				imageInterestPoints.add(pointsSearcher.getImagePoints().get(path));
+			}
+		}
+		return imageInterestPoints;
 	}
 
 	private void debug(String message) {

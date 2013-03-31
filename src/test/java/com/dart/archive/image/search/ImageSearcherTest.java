@@ -16,6 +16,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 
+import com.dart.archive.image.search.surf.InterestPointsSearcher;
 import com.dart.archive.image.utils.ImageHelper;
 
 /**
@@ -40,6 +41,7 @@ public abstract class ImageSearcherTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		InterestPointsSearcher.setUseCache(false);
 		Properties properties = new Properties();
 		properties.load(new FileInputStream("src/test/resources/test.properties"));
 		imagesFolder = System.getProperty("images");
@@ -70,6 +72,7 @@ public abstract class ImageSearcherTest {
 		String time = "["+end+"ms]";
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(StringUtils.rightPad(time, 11));
+		buffer.append(StringUtils.rightPad(String.valueOf(candidates.size()), 5));
 		buffer.append(StringUtils.rightPad(file.getName(), 40));
 		buffer.append(":");
 		double score = 1.0d;
