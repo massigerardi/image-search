@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import java.io.File;
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,8 +23,9 @@ import com.dart.archive.image.search.surf.InterestPointsSearcher;
  */
 public class ImageSearchServiceImplTest extends ImageSearcherTest {
 
-	PreFilteringImageSearchServiceImpl filteringSearchService;
-	SequenceImageSearchService sequenceSearchService;
+	private final Logger logger = Logger.getLogger(ImageSearchServiceImplTest.class);
+
+	ImageSearchServiceImpl searchService;
 	InterestPointsSearcher pointsSearcher;
 	NaiveColorImageSearcher colorImageSearcher;
 	
@@ -32,8 +34,7 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 		super.setUp();
 		pointsSearcher = new InterestPointsSearcher(imagesFolder);
 		colorImageSearcher = new NaiveColorImageSearcher(imagesFolder);
-		filteringSearchService = new PreFilteringImageSearchServiceImpl(pointsSearcher, colorImageSearcher);
-		sequenceSearchService = new SequenceImageSearchService(pointsSearcher, colorImageSearcher);
+		searchService = new ImageSearchServiceImpl(pointsSearcher, colorImageSearcher);
 	}
 	
 	
@@ -42,7 +43,7 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	 */
 	@Test
 	public void testFilteringSearch() {
-		testSearch(filteringSearchService);
+		testSearch(ImageSearchService.PRE_FILTERING);
 	}
 	
 	/**
@@ -50,21 +51,21 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	 */
 	@Test
 	public void testSequenceSearch() {
-		testSearch(sequenceSearchService);
+		testSearch(ImageSearchService.SEQUENCE);
 	}
 
-	private void testSearch(ImageSearchService searchService) {
+	private void testSearch(String strategy) {
+		logger.debug("test search("+strategy+")");
 		File image = new File(testFolder, "DG4X0099.jpg");
-		testSearch(image, searchService);
+		testSearch(image, strategy);
 		image = new File(testFolder, "elena-1.jpg");
-		testSearch(image, searchService);
+		testSearch(image, strategy);
 		image = new File(testFolder, "lim-001-000.ppm");
-		testSearch(image, searchService);
+		testSearch(image, strategy);
 	}
 
-	private void testSearch(File image,
-			ImageSearchService searchService) {
-		Collection<Candidate> candidates = searchService.search(image);
+	private void testSearch(File image,	String strategy) {
+		Collection<Candidate> candidates = searchService.search(image, strategy);
 		assertFalse("image "+image.getName(), candidates.isEmpty());
 	}
 	

@@ -14,13 +14,21 @@ import com.dart.archive.image.search.Candidate;
  */
 public interface ImageSearchService {
 
+	public static final String SEQUENCE = "SEQUENCE";
+	 
+	public static final String PRE_FILTERING = "PRE_FILTERING";
+	
 	/**
-	 * searches for a image
-	 * @param image the image file to search
-	 * @return a list of similar images
+	 * searches for an image applying a given strategy
+	 * 
+	 * @param image
+	 * @param strategy
+	 * @return
 	 */
-	Collection<Candidate> search(File image);
+	Collection<Candidate> search(File image, String strategy);
 	
-	
+	/**
+	 * reload the images into the searcher
+	 */
 	void reload();
 }
