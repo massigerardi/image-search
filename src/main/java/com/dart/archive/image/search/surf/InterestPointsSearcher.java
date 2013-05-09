@@ -16,6 +16,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -23,10 +24,8 @@ import net.sf.ehcache.Element;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.log4j.Logger;
 
 import com.dart.archive.image.search.Candidate;
-import com.dart.archive.image.search.CandidateImpl;
 import com.dart.archive.image.search.ImageSearcher;
 import com.dart.archive.image.search.surf.ip.InterestPoint;
 import com.dart.archive.image.search.surf.ip.Matcher;
@@ -39,10 +38,11 @@ import com.google.common.base.Objects;
  *
  */
 @Getter
+@Slf4j
 public class InterestPointsSearcher implements ImageSearcher {
 
-	private final Logger logger = Logger.getLogger(InterestPointsSearcher.class);
-	
+	private static final String SURF = "SURF";
+
 	private ImageHelper imageHelper = new ImageHelper();
 	
 	private final Map<String, ImageInterestPoints> imagePoints = new TreeMap<String, ImageInterestPoints>();
@@ -61,15 +61,15 @@ public class InterestPointsSearcher implements ImageSearcher {
 	
 	public Collection<Candidate> search(File file, Collection<ImageInterestPoints> imagePointsList) {
 		Collection<Candidate> candidates = new TreeSet<Candidate>();
-		debug("searching..." + file.getName());
+		log.debug("searching..." + file.getName());
 		final long start = System.currentTimeMillis();
 		List<InterestPoint> points = resizeAndFindInterestPoints(file);
 		try {
 			for (ImageInterestPoints imagePoints : imagePointsList) {
 				final double distance = calculateDistance(points, imagePoints.getPoints());
 				if (distance>0.1d) {
-					debug("candidate: " + imagePoints.getImage().getName() + " result: " + distance);					
-					candidates.add(new CandidateImpl(distance, imagePoints.getImage()));
+					log.debug("candidate: " + imagePoints.getImage().getName() + " result: " + distance);					
+					candidates.add(new Candidate(imagePoints.getImage(), distance, SURF));
 					if (distance>0.60d) {
 						break;
 					}
@@ -77,7 +77,7 @@ public class InterestPointsSearcher implements ImageSearcher {
 			}
 		} finally {
 			long end = System.currentTimeMillis();
-			debug("search in "+imagePointsList.size()+" images took "+(end -  start)+" ms");
+			log.debug("search in "+imagePointsList.size()+" images took "+(end -  start)+" ms");
 		}
 		return candidates;
 	}
@@ -99,14 +99,8 @@ public class InterestPointsSearcher implements ImageSearcher {
 		init();
 	}
 	
-	private void debug(String message) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(message);
-		}
-	}
-
 	protected void init() {
-		debug("init "+this.toString());
+		log.debug("init "+this.toString());
 		List<File> files = imageHelper.getImages(new File(sources));
 		if (useCache) {
 			System.setProperty("net.sf.ehcache.enableShutdownHook","true");
@@ -124,7 +118,7 @@ public class InterestPointsSearcher implements ImageSearcher {
 				imagePoints.put(file.getAbsolutePath(), new ImageInterestPoints(file, points));
 			}
 		}
-		debug("init done "+this.toString());
+		log.debug("init done "+this.toString());
 	}
 	
 	private void loadImageInterestPointsFromCache(File file) {
@@ -132,10 +126,10 @@ public class InterestPointsSearcher implements ImageSearcher {
 		String key = getKey(file);
 		Element element = interestPoints.get(key);
 		if(element != null) {
-			debug("element "+ key +" was found in cache");
+			log.debug("element "+ key +" was found in cache");
 			imageInterestPoints = (ImageInterestPoints)element.getObjectValue();
 		} else {
-			debug("element "+ key +" was NOT found in cache");
+			log.debug("element "+ key +" was NOT found in cache");
 			List<InterestPoint> points = resizeAndFindInterestPoints(file);
 			imageInterestPoints = new ImageInterestPoints(file, points);			
 			interestPoints.put(new Element(key, imageInterestPoints));
@@ -157,7 +151,7 @@ public class InterestPointsSearcher implements ImageSearcher {
 		try {
 			ImageUtils.resizeAndSave(600, file.getAbsolutePath(), dest.getAbsolutePath());
 		} catch (IOException e) {
-			logger.error("resizing", e);
+			log.error("resizing", e);
 			return findInterestPoints(file);
 		}
 		try {
@@ -166,20 +160,20 @@ public class InterestPointsSearcher implements ImageSearcher {
 			try {
 				FileUtils.forceDelete(dest);
 			} catch (IOException e) {
-				logger.error("deleting "+dest, e);
+				log.error("deleting "+dest, e);
 			}
 		}
 	}
 
 	private List<InterestPoint> findInterestPoints(File file) {
-		debug("findInterestPoints start ... "+file.getName());
+		log.debug("findInterestPoints start ... "+file.getName());
 		long start = System.currentTimeMillis();
 		try {
 			ImagePlus image = opener.openImage(file.getAbsolutePath());
 			return finder.findInterestingPoints(image.getProcessor());
 		} finally {
 			long end = System.currentTimeMillis();
-			debug("findInterestPoints "+file.length()+" took "+(end -  start)+" ms");
+			log.debug("findInterestPoints "+file.length()+" took "+(end -  start)+" ms");
 		}
 	}
 

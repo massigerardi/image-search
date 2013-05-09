@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 
@@ -23,6 +25,7 @@ import com.dart.archive.image.utils.ImageHelper;
  * @author massi
  *
  */
+@Slf4j
 public abstract class ImageSearcherTest {
 
 	protected String imagesFolder;
@@ -55,13 +58,12 @@ public abstract class ImageSearcherTest {
 	}
 
 	protected void compare(double treshold) throws IOException {
-		System.out.println("comparing with "+searcher.toString());
+		log.debug("comparing with {}",searcher.toString());
 		File testImages = new File(testFolder);
 		List<File> images = new ImageHelper().getImages(testImages);
 		for (File image : images) {
 			compare(image, treshold);
 		}
-		System.out.println();
 	}
 	
 	protected void compare(File file, double treshold) throws IOException {
@@ -87,7 +89,7 @@ public abstract class ImageSearcherTest {
 			score = candidate.getScore();
 		}
 		buffer.append("... ");
-		System.out.println(buffer);
+		log.debug(buffer.toString());
 	}
 
 }

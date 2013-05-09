@@ -10,7 +10,7 @@ import java.util.TreeSet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import com.dart.archive.image.search.Candidate;
 import com.dart.archive.image.search.ImageSearcher;
@@ -23,9 +23,8 @@ import com.google.common.base.Objects;
  * @author massi
  *
  */
+@Slf4j
 public class ImageSearchServiceImpl implements ImageSearchService {
-
-	private final Logger logger = Logger.getLogger(ImageSearchServiceImpl.class);
 
 	InterestPointsSearcher pointsSearcher;
 	
@@ -59,7 +58,7 @@ public class ImageSearchServiceImpl implements ImageSearchService {
 			this.searcher = searcher;
 		}
 		public void run() {
-			logger.debug("reloading "+searcher);
+			log.debug("reloading {}",searcher);
 			searcher.reload();
 		}
 		
@@ -69,12 +68,6 @@ public class ImageSearchServiceImpl implements ImageSearchService {
 	public void reload() {
 		executor.execute(new ReloadJob(colorSearcher));
 		executor.execute(new ReloadJob(pointsSearcher));
-	}
-
-	private void debug(String message) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(message);
-		}
 	}
 
 	@Override
@@ -89,12 +82,14 @@ public class ImageSearchServiceImpl implements ImageSearchService {
 		long start = System.currentTimeMillis();
 		try {
 			Collection<Candidate> candidates = pointsSearcher.search(image);
+			log.debug("sequence stage 1: {} : {}",image.getName(), candidates);
 			if (candidates.isEmpty()) {
 				candidates = colorSearcher.search(image);
+				log.debug("sequence stage 2: {} : {}",image.getName(), candidates);
 			}
 			return candidates;
 		} finally {
-			debug("search for "+image.getName()+" took "+(System.currentTimeMillis()-start)+"ms");
+			log.debug("search for "+image.getName()+" took "+(System.currentTimeMillis()-start)+"ms");
 		}
 	}
 
@@ -108,15 +103,15 @@ public class ImageSearchServiceImpl implements ImageSearchService {
 			if (candidates.isEmpty()) {
 				return candidates;
 			}
-			debug(image.getName()+":"+candidates);
+			log.debug("prefiltering stage 1: {} : {}",image.getName(), candidates);
 			Collection<Candidate> newCandidates = pointsSearcher.search(image, getSubset(candidates));
 			if (newCandidates.isEmpty()) {
 				return candidates;
 			}
-			debug(image.getName()+":"+newCandidates);
+			log.debug("prefiltering stage 2: {} : {}",image.getName(), newCandidates);
 			return newCandidates;
 		} finally {
-			debug("search for "+image.getName()+" took "+(System.currentTimeMillis()-start)+"ms");
+			log.debug("search for "+image.getName()+" took "+(System.currentTimeMillis()-start)+"ms");
 		}
 	}
 

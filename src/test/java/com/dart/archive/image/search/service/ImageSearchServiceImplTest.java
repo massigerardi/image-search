@@ -8,6 +8,8 @@ import static org.junit.Assert.assertFalse;
 import java.io.File;
 import java.util.Collection;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,9 +23,8 @@ import com.dart.archive.image.search.surf.InterestPointsSearcher;
  * @author massi
  *
  */
+@Slf4j
 public class ImageSearchServiceImplTest extends ImageSearcherTest {
-
-	private final Logger logger = Logger.getLogger(ImageSearchServiceImplTest.class);
 
 	ImageSearchServiceImpl searchService;
 	InterestPointsSearcher pointsSearcher;
@@ -55,7 +56,7 @@ public class ImageSearchServiceImplTest extends ImageSearcherTest {
 	}
 
 	private void testSearch(String strategy) {
-		logger.debug("test search("+strategy+")");
+		log.debug("test search("+strategy+")");
 		File image = new File(testFolder, "DG4X0099.jpg");
 		testSearch(image, strategy);
 		image = new File(testFolder, "elena-1.jpg");

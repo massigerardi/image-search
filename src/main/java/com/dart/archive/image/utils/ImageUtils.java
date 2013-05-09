@@ -4,7 +4,6 @@
 package com.dart.archive.image.utils;
 
 import ij.ImagePlus;
-import ij.io.FileInfo;
 import ij.io.Opener;
 
 import java.awt.image.BufferedImage;
@@ -15,24 +14,18 @@ import java.util.Collection;
 
 import javax.imageio.ImageIO;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author massi
  *
  */
+@Slf4j
 public class ImageUtils {
-
-	static Logger logger = Logger.getLogger(ImageUtils.class);
-	
-	private static void debug(String message) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(message);
-		}
-	}
 
 	private static Opener opener = new Opener();
 	/**
@@ -62,7 +55,7 @@ public class ImageUtils {
 		if (sizes.length>1) {
 			h = Integer.valueOf(sizes[1]);
 		}
-		debug("size: "+w+(h<0?"":"x"+h));
+		log.debug("size: "+w+(h<0?"":"x"+h));
 		String path = args[1];
 		File file = new File(path);
 		if (file.exists()) {
@@ -93,7 +86,7 @@ public class ImageUtils {
 	 * @throws IOException
 	 */
 	public static void resizeFolder(int width, int height, File folder) throws IOException {
-		debug("resizing to "+width+"x"+height+" in folder "+folder.getAbsolutePath());
+		log.debug("resizing to "+width+"x"+height+" in folder "+folder.getAbsolutePath());
 		Collection<File> files = FileUtils.listFiles(folder, new String[] {"jpg", "JPG", "jpeg", "ppm"}, false);
 		for (File file : files) {
 			resizeAndSave(width, height, file.getAbsolutePath(), createDest(file.getAbsolutePath()));
@@ -110,7 +103,7 @@ public class ImageUtils {
 	 * @throws IOException
 	 */
 	public static void resizeFolder(int size, File folder) throws IOException {
-		debug("resizing to "+size+" in folder "+folder.getAbsolutePath());
+		log.debug("resizing to "+size+" in folder "+folder.getAbsolutePath());
 		Collection<File> files = FileUtils.listFiles(folder, new String[] {"jpg", "JPG", "jpeg", "ppm", "PPM"}, false);
 		for (File file : files) {
 			resizeAndSave(size, file.getAbsolutePath(), createDest(file.getAbsolutePath()));
@@ -176,7 +169,7 @@ public class ImageUtils {
 	 */
 	public static BufferedImage resizeAndSave(int width, int height, String src, String dest) throws IOException {
 		dest = createDest(src, dest);
-		debug("resizing to "+width+"x"+height+" file "+src+" to "+dest);
+		log.debug("resizing to "+width+"x"+height+" file "+src+" to "+dest);
 		BufferedImage image = resize(width, height, src);
 		String ext = FilenameUtils.getExtension(src);
 		ImageIO.write(image, ext, new File(dest));
@@ -206,7 +199,7 @@ public class ImageUtils {
 		} else {
 			width = (int) (height * ratio);
 		}
-		debug("resizing to "+width+"x"+height);
+		log.debug("resizing to "+width+"x"+height);
 		return image.getProcessor().resize(width, height).getBufferedImage();
 	}
 	
@@ -225,7 +218,7 @@ public class ImageUtils {
 	 */
 	public static BufferedImage resizeAndSave(int size, String src, String dest) throws IOException {
 		dest = createDest(src, dest);
-		debug("resizing to "+size+" file "+src+" to "+dest);
+		log.debug("resizing to "+size+" file "+src+" to "+dest);
 		BufferedImage image = resize(size, src);
 		ImageIO.write(image, "jpg", new File(dest));
 		return image;

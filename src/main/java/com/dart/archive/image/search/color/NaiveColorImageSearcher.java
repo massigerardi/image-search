@@ -14,10 +14,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import com.dart.archive.image.search.Candidate;
-import com.dart.archive.image.search.CandidateImpl;
 import com.dart.archive.image.search.ImageSearcher;
 import com.dart.archive.image.utils.ImageHelper;
 import com.dart.archive.image.utils.ImageUtils;
@@ -28,10 +27,10 @@ import com.google.common.base.Objects;
  * @author massi
  * 
  */
+@Slf4j
 public class NaiveColorImageSearcher implements ImageSearcher {
 
-	Logger logger = Logger.getLogger(NaiveColorImageSearcher.class);
-	
+	private static final String COLOR = "COLOR";
 	ImageHelper imageHelper = new ImageHelper();
 	
 	private String sources;
@@ -57,14 +56,8 @@ public class NaiveColorImageSearcher implements ImageSearcher {
 				.add("images", imagesDescriptors.size()).toString();
 	}
 
-	private void debug(String message) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(message);
-		}
-	}
-
 	protected void init() {
-		debug("init "+this.toString());
+		log.debug("init "+this.toString());
 		baseSize = zoneSize * zones;
 		fraction = zones * 2;
 		baseDistance = Math.pow(zones, 2) * Math.sqrt( 3*(Math.pow(255,2)));
@@ -76,7 +69,7 @@ public class NaiveColorImageSearcher implements ImageSearcher {
 			ImageDescriptor image = new ImageDescriptor(signature, file);
 			imagesDescriptors.add(image);
 		}
-		debug("init done"+this.toString());
+		log.debug("init done"+this.toString());
 	}
 
 	// The reference image "signature" (25 representative pixels, each in
@@ -180,7 +173,7 @@ public class NaiveColorImageSearcher implements ImageSearcher {
 				double distance = calcDistance(signature, imageDescriptor.getSignature());
 				DecimalFormat twoDForm = new DecimalFormat("#.##");
 				double result = (double)Math.round(distance * 100) / 100;
-				candidates.add(new CandidateImpl(Double.valueOf(twoDForm.format(result)), imageDescriptor.getImage()));
+				candidates.add(new Candidate(imageDescriptor.getImage(), Double.valueOf(twoDForm.format(result)), COLOR));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

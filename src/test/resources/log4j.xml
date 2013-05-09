@@ -14,18 +14,6 @@
         <level value="warn"></level>
     </logger>
 
-    <logger name="com.dart.archive.image.utils">
-        <level value="warn"></level>
-    </logger>
-
-    <logger name="com.dart.archive.image.search">
-        <level value="warn"></level>
-    </logger>
-    
-    <logger name="com.dart.archive.image.search.service">
-        <level value="debug"></level>
-    </logger>
-
 	<root>
 		<priority value="debug" />
 		<appender-ref ref="console" />
