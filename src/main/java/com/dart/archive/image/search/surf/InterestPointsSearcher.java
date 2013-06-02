@@ -123,29 +123,20 @@ public class InterestPointsSearcher implements ImageSearcher {
 	
 	private void loadImageInterestPointsFromCache(File file) {
 		ImageInterestPoints imageInterestPoints = null;
-		String key = getKey(file);
-		Element element = interestPoints.get(key);
+		Element element = interestPoints.get(file.getAbsolutePath());
 		if(element != null) {
-			log.debug("element "+ key +" was found in cache");
+			log.debug("file {} was found in cache", file.getAbsolutePath());
 			imageInterestPoints = (ImageInterestPoints)element.getObjectValue();
 		} else {
-			log.debug("element "+ key +" was NOT found in cache");
+			log.debug("file {} was NOT found in cache", file.getAbsolutePath());
 			List<InterestPoint> points = resizeAndFindInterestPoints(file);
 			imageInterestPoints = new ImageInterestPoints(file, points);			
-			interestPoints.put(new Element(key, imageInterestPoints));
+			interestPoints.put(new Element(file.getAbsolutePath(), imageInterestPoints));
 			interestPoints.flush();
 		}
 		imagePoints.put(file.getAbsolutePath(), imageInterestPoints);
 	}
 	
-	private String getKey(File file) {
-		return String.valueOf(new HashCodeBuilder()
-			.append(file.getParent())
-			.append(file.getName())
-			.append(file.length())
-			.toHashCode());
-	}
-
 	private List<InterestPoint> resizeAndFindInterestPoints(File file) {
 		File dest = new File(file.getParentFile(), UUID.randomUUID()+"."+FilenameUtils.getExtension(file.getName()));
 		try {
