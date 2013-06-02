@@ -82,10 +82,10 @@ public class ImageSearchServiceImpl implements ImageSearchService {
 		long start = System.currentTimeMillis();
 		try {
 			Collection<Candidate> candidates = pointsSearcher.search(image);
-			log.debug("sequence stage 1: {} : {}",image.getName(), candidates);
+			log.debug("sequence stage 1: {} : {}",image.getName(), candidates.size());
 			if (candidates.isEmpty()) {
 				candidates = colorSearcher.search(image);
-				log.debug("sequence stage 2: {} : {}",image.getName(), candidates);
+				log.debug("sequence stage 2: {} : {}",image.getName(), candidates.size());
 			}
 			return candidates;
 		} finally {
@@ -103,12 +103,12 @@ public class ImageSearchServiceImpl implements ImageSearchService {
 			if (candidates.isEmpty()) {
 				return candidates;
 			}
-			log.debug("prefiltering stage 1: {} : {}",image.getName(), candidates);
+			log.debug("prefiltering stage 1: {} : {}",image.getName(), candidates.size());
 			Collection<Candidate> newCandidates = pointsSearcher.search(image, getSubset(candidates));
 			if (newCandidates.isEmpty()) {
 				return candidates;
 			}
-			log.debug("prefiltering stage 2: {} : {}",image.getName(), newCandidates);
+			log.debug("prefiltering stage 2: {} : {}",image.getName(), newCandidates.size());
 			return newCandidates;
 		} finally {
 			log.debug("search for "+image.getName()+" took "+(System.currentTimeMillis()-start)+"ms");
